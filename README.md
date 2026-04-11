@@ -1,20 +1,20 @@
 # Aura E-Commerce Platform
 
-Aura is a modern, full-stack e-commerce web application featuring dynamic category management, real-time cart functionality, secure checkout flows, and a comprehensive Admin Dashboard. Designed with a sleek, responsive aesthetic and a built-in dark/light mode toggle.
+![Aura Platform Demo](./demo.webp)
+
+Aura is a modern, responsive, full-stack e-commerce web application meticulously designed with a Glassmorphism aesthetic featuring a comprehensive Admin Dashboard, secure checkout flows, dynamic product evaluations, and a built-in dark/light mode toggle.
+
+## Core Features
+* **Interactive Product Ratings**: Embedded 1-5 Star interactive module mapping subjective reviews entirely to persistent Spring Boot data stores.
+* **Dynamic Category Management**: Powerful CRUD environment enabling administrators to infinitely govern overarching site categories natively.
+* **Persistent Cart & Wishlist**: Real-time context API arrays mapped to responsive localized storage caches.
+* **Complete Order Governance**: Direct interaction allowing administrative-level order cancellations instantly rippling across unified UI structures.
+* **Robust Theme Toggle**: Switch instantly between beautifully optimized Light Mode and Dark Mode parameters.
 
 ## Tech Stack
-* **Frontend**: React, Vite, React Router, Context API, Lucide React (Icons), Custom CSS Variables for Theming.
-* **Backend**: Spring Boot, Spring Data JPA, H2 Database (In-Memory), Maven.
-* **Tooling**: Node.js, npm, Java.
-
-## Features
-* **Dynamic Cart System**: Persistent shopping cart mapped with immediate price calculation.
-* **Robust Theme Toggle**: Switch instantly between carefully designed Light Mode and Dark Mode.
-* **Integrated Admin Dashboard**: 
-  * Add, View, Edit, and Delete Products seamlessly.
-  * Dedicated Category Management (fully interactive CRUD module).
-  * Direct Order Management with instant cancellation integration.
-* **Responsive Layout**: Designed specifically for fluid navigation across Desktop, Tablet, and Mobile displays.
+* **Frontend**: React, Vite, React Router DOM, Context API, Lucide React (Icons), Native CSS (`var(...)` CSS Theming).
+* **Backend**: Spring Boot, Spring Data JPA, H2 Database (In-Memory), Jackson, Maven.
+* **Persistence Layer**: `@Entity` ORM schema definitions running continuously synchronized with automated standard JDBC updates.
 
 ## Setup & Run Instructions
 
@@ -40,5 +40,7 @@ npm run dev
 ```
 The frontend interface will deploy locally at usually `http://localhost:5173`. 
 
-## Built For
-This project was refactored and built to emulate absolute structural perfection across full-stack modern environments, demonstrating precise DOM manipulation alongside Spring Boot Data persistence.
+## Architecture Map
+- `/frontend/src/pages/AdminDashboard.jsx`: Absolute unified view encapsulating products, categories, and order logic contexts in independent toggled tabs.
+- `/backend/src/main/java/com/ecommerce/model/Review.java`: High-volume payload storage controller preventing 500 error boundaries through `@Column(length=2048)` limit expansions on media definitions.
+- `/frontend/src/pages/ProductDetails.jsx`: Dedicated product interaction route explicitly rendering specific analytical responses matched to its respective ID parameters over REST `GET` and `POST` maps.
