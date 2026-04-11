@@ -10,7 +10,9 @@ const ProductCard = memo(({ product, onAdd }) => {
   return (
     <div className="product-card glass-panel hover-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <div style={{ position: 'relative' }}>
-        <img src={product.imageUrl || 'https://via.placeholder.com/300x220?text=No+Image'} alt={product.name} className="product-image" />
+        <Link to={`/product/${product.id}`}>
+          <img src={product.imageUrl || 'https://via.placeholder.com/300x220?text=No+Image'} alt={product.name} className="product-image" style={{ cursor: 'pointer' }} />
+        </Link>
         <button className="btn-icon" onClick={() => toggleWishlist && toggleWishlist(product)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', color: wished ? 'var(--danger)' : 'white' }}>
           <Heart size={18} fill={wished ? 'var(--danger)' : 'transparent'} />
         </button>

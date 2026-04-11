@@ -17,6 +17,7 @@ const Wishlist = lazy(() => import('./pages/Wishlist'));
 const Categories = lazy(() => import('./pages/Categories'));
 const Orders = lazy(() => import('./pages/Orders'));
 const Checkout = lazy(() => import('./pages/Checkout'));
+const ProductDetails = lazy(() => import('./pages/ProductDetails'));
 
 const Loader = () => (
   <div style={{ padding: 'var(--space-xl)', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-lg)' }}>
@@ -50,6 +51,7 @@ function App() {
                 <Route path="/wishlist" element={<Suspense fallback={<Loader />}><Wishlist /></Suspense>} />
                 <Route path="/orders" element={<Suspense fallback={<Loader />}><Orders /></Suspense>} />
                 <Route path="/checkout" element={<Suspense fallback={<Loader />}><Checkout /></Suspense>} />
+                <Route path="/product/:id" element={<Suspense fallback={<Loader />}><ProductDetails /></Suspense>} />
                 
                 {/* Protected Admin Route */}
                 <Route path="/admin" element={
