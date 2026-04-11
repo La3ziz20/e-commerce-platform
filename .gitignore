@@ -1,0 +1,23 @@
+# Build environments
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Spring Boot
+backend/target/
+*.class
+*.jar
+*.war
+.mvn/
+
+# IDE & OS Files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
