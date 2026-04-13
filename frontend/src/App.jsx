@@ -15,6 +15,7 @@ const Login = lazy(() => import('./pages/Login'));
 const Signup = lazy(() => import('./pages/Signup'));
 const Wishlist = lazy(() => import('./pages/Wishlist'));
 const Categories = lazy(() => import('./pages/Categories'));
+const Suppliers = lazy(() => import('./pages/Suppliers'));
 const Orders = lazy(() => import('./pages/Orders'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const ProductDetails = lazy(() => import('./pages/ProductDetails'));
@@ -48,6 +49,7 @@ function App() {
               <Route path="/" element={<MainLayout searchQuery={searchQuery} setSearchQuery={setSearchQuery} />}>
                 <Route index element={<Suspense fallback={<Loader />}><HomePage /></Suspense>} />
                 <Route path="/categories" element={<Suspense fallback={<Loader />}><Categories /></Suspense>} />
+                <Route path="/suppliers" element={<Suspense fallback={<Loader />}><Suppliers /></Suspense>} />
                 <Route path="/wishlist" element={<Suspense fallback={<Loader />}><Wishlist /></Suspense>} />
                 <Route path="/orders" element={<Suspense fallback={<Loader />}><Orders /></Suspense>} />
                 <Route path="/checkout" element={<Suspense fallback={<Loader />}><Checkout /></Suspense>} />

@@ -10,10 +10,12 @@ const HomePage = () => {
   const { searchQuery } = useOutletContext() || {};
   const [searchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
+  const supplierFilter = searchParams.get('supplier');
   const navigate = useNavigate();
   
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState('newest');
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -32,7 +34,14 @@ const HomePage = () => {
   const filteredProducts = products.filter(p => {
     const matchesSearch = searchQuery ? (p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.description.toLowerCase().includes(searchQuery.toLowerCase())) : true;
     const matchesCategory = categoryFilter ? p.category === categoryFilter : true;
-    return matchesSearch && matchesCategory;
+    const matchesSupplier = supplierFilter ? (p.supplier && p.supplier.id.toString() === supplierFilter) : true;
+    return matchesSearch && matchesCategory && matchesSupplier;
+  }).sort((a, b) => {
+    if (sortBy === 'price-low') return a.price - b.price;
+    if (sortBy === 'price-high') return b.price - a.price;
+    if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
+    if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
+    return b.id - a.id; // newest (highest ID first) defaults
   });
 
   const handleAdd = (product) => {
@@ -42,16 +51,30 @@ const HomePage = () => {
 
   return (
     <>
-      <div style={{ marginBottom: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ marginBottom: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-sm)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-          <h2>{categoryFilter ? `Category: ${categoryFilter}` : 'Explore Products'}</h2>
-          {categoryFilter && (
+          <h2>{categoryFilter ? `Category: ${categoryFilter}` : supplierFilter ? 'Filtered by Supplier' : 'Explore Products'}</h2>
+          {(categoryFilter || supplierFilter) && (
             <button className="btn-icon hover-card" onClick={() => navigate('/')} style={{ background: 'var(--danger)', color: 'white', padding: '4px' }}>
               <X size={16} />
             </button>
           )}
         </div>
-        <span style={{ color: 'var(--text-muted)' }}>{filteredProducts.length} Results</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+          <span style={{ color: 'var(--text-muted)' }}>{filteredProducts.length} Results</span>
+          <select 
+            className="glass-input" 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            style={{ padding: '8px 16px', background: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer', maxWidth: '200px' }}
+          >
+            <option value="newest">Latest Arrivals</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name-asc">Name: A to Z</option>
+            <option value="name-desc">Name: Z to A</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (

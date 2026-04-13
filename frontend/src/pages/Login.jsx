@@ -7,20 +7,21 @@ import toast from 'react-hot-toast';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { login, users } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (login(email)) {
+    if (login(email, password)) {
       toast.success("Successfully logged in");
-      if (email === 'admin@aura.com' || email === 'aziz@aura.com') {
+      const loggedInUser = users.find(u => u.email === email);
+      if (loggedInUser?.role === 'SUPER_ADMIN' || loggedInUser?.role === 'ADMIN') {
         navigate('/admin');
       } else {
         navigate('/');
       }
     } else {
-      toast.error("User not found. Please sign up.");
+      toast.error("Invalid email or password");
     }
   };
 

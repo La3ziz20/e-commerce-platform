@@ -110,7 +110,14 @@ const ProductDetails = () => {
         </div>
         
         <div style={{ padding: 'var(--space-xl)', display: 'flex', flexDirection: 'column' }}>
-          <div className="badge" style={{ alignSelf: 'flex-start', marginBottom: 'var(--space-sm)' }}>{product.category}</div>
+          <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', marginBottom: 'var(--space-sm)' }}>
+            <div className="badge">{product.category}</div>
+            {product.supplier && (
+              <div className="badge" style={{ backgroundColor: 'var(--accent)', color: 'white' }}>
+                Supplier: {product.supplier.name}
+              </div>
+            )}
+          </div>
           <h1 style={{ fontSize: '2.5rem', marginBottom: 'var(--space-md)' }}>{product.name}</h1>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', marginBottom: 'var(--space-lg)' }}>

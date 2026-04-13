@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Users, ShoppingBag, Edit, Trash2, Plus, X } from 'lucide-react';
+import { Package, Users, ShoppingBag, Edit, Trash2, Plus, X, Briefcase } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CATEGORY_NAMES } from '../data/categories';
 import { useAuth } from '../components/AuthContext';
 import { useCart } from '../components/CartContext';
+import { Clock, Truck, CheckCircle, XCircle } from 'lucide-react';
+
+const STATUS_MAP = {
+  'Processing': { icon: Clock, color: 'var(--accent)' },
+  'Shipped': { icon: Truck, color: 'var(--primary)' },
+  'Delivered': { icon: CheckCircle, color: 'var(--text-muted)' },
+  'Cancelled': { icon: XCircle, color: 'var(--danger)' }
+};
 
 const AdminDashboard = () => {
-  const { users, updateRole, categoriesList, addCategory, editCategory, deleteCategory } = useAuth();
+  const { user, users, isSuperAdmin, updateRole, register, editUser, deleteUser, categoriesList, addCategory, editCategory, deleteCategory } = useAuth();
   const { orders, updateOrderStatus } = useCart();
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -17,8 +26,19 @@ const AdminDashboard = () => {
   const [editingCategoryName, setEditingCategoryName] = useState(null);
   const [categoryFormName, setCategoryFormName] = useState('');
   
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
+  const [editingSupplier, setEditingSupplier] = useState(null);
+  const [supplierFormData, setSupplierFormData] = useState({ name: '', contactEmail: '', phone: '' });
+
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [userFormData, setUserFormData] = useState({ name: '', email: '', password: '', role: 'USER' });
+
+  const [isManageUserModalOpen, setIsManageUserModalOpen] = useState(false);
+  const [manageUserFormData, setManageUserFormData] = useState({ userId: null, name: '', email: '', password: '', role: '' });
+  const [manageUserStats, setManageUserStats] = useState({ ordersCount: 0 });
+
   const [formData, setFormData] = useState({
-    name: '', category: '', description: '', price: '', imageUrl: ''
+    name: '', category: '', description: '', price: '', imageUrl: '', supplierStr: ''
   });
 
   const todayStr = new Date().toISOString().split('T')[0];
@@ -30,8 +50,15 @@ const AdminDashboard = () => {
       .then(data => setProducts(data));
   };
 
+  const fetchSuppliers = () => {
+    fetch('http://localhost:8080/api/suppliers')
+      .then(res => res.json())
+      .then(data => setSuppliers(data));
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchSuppliers();
   }, []);
 
   const handleDelete = (id) => {
@@ -54,12 +81,26 @@ const AdminDashboard = () => {
   const handleOpenModal = (product = null) => {
     if(product && product.id) {
       setEditingProduct(product);
-      setFormData(product);
+      setFormData({
+        ...product,
+        supplierStr: product.supplier ? product.supplier.id.toString() : ''
+      });
     } else {
       setEditingProduct(null);
-      setFormData({ name: '', category: '', description: '', price: '', imageUrl: '' });
+      setFormData({ name: '', category: '', description: '', price: '', imageUrl: '', supplierStr: '' });
     }
     setIsModalOpen(true);
+  };
+
+  const handleOpenSupplierModal = (supplier = null) => {
+    if(supplier && supplier.id) {
+      setEditingSupplier(supplier);
+      setSupplierFormData(supplier);
+    } else {
+      setEditingSupplier(null);
+      setSupplierFormData({ name: '', contactEmail: '', phone: '' });
+    }
+    setIsSupplierModalOpen(true);
   };
 
   const handleOpenCategoryModal = (catName = null) => {
@@ -88,6 +129,68 @@ const AdminDashboard = () => {
     toast.success("Category deleted!");
   };
 
+  const handleSupplierSubmit = (e) => {
+    e.preventDefault();
+    const method = editingSupplier ? 'PUT' : 'POST';
+    const url = editingSupplier 
+      ? `http://localhost:8080/api/suppliers/${editingSupplier.id}` 
+      : 'http://localhost:8080/api/suppliers';
+      
+    fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(supplierFormData)
+    })
+    .then(async res => {
+      if(!res.ok) throw new Error("Failed connecting to server");
+      return res.json();
+    })
+    .then(data => {
+      toast.success(editingSupplier ? "Supplier updated!" : "Supplier added!");
+      setIsSupplierModalOpen(false);
+      fetchSuppliers();
+    })
+    .catch(err => toast.error(err.message));
+  };
+
+  const handleDeleteSupplier = (id) => {
+    if(!window.confirm("Are you sure you want to delete this supplier?")) return;
+    fetch(`http://localhost:8080/api/suppliers/${id}`, { method: 'DELETE' })
+      .then(res => {
+        if(res.ok) {
+          setSuppliers(suppliers.filter(s => s.id !== id));
+          toast.success("Supplier deleted!");
+        } else throw new Error("Failed to delete (might be linked to products)");
+      }).catch(err => toast.error(err.message));
+  };
+
+  const handleUserSubmit = (e) => {
+    e.preventDefault();
+    register({ name: userFormData.name, email: userFormData.email, password: userFormData.password, role: userFormData.role });
+    toast.success("User created successfully!");
+    setIsUserModalOpen(false);
+    setUserFormData({ name: '', email: '', password: '', role: 'USER' });
+  };
+
+  const handleManageUserSubmit = (e) => {
+    e.preventDefault();
+    editUser(manageUserFormData.userId, { 
+       name: manageUserFormData.name, 
+       email: manageUserFormData.email, 
+       password: manageUserFormData.password,
+       role: manageUserFormData.role
+    });
+    toast.success("User profile updated successfully!");
+    setIsManageUserModalOpen(false);
+  };
+
+  const handleDeleteTargetUser = (userId) => {
+    if(!window.confirm("Are you critically sure you want to permanently delete this user?")) return;
+    deleteUser(userId);
+    toast.success("User deleted successfully!");
+    setIsManageUserModalOpen(false);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
@@ -95,8 +198,13 @@ const AdminDashboard = () => {
       ? `http://localhost:8080/api/products/${editingProduct.id}` 
       : 'http://localhost:8080/api/products';
       
-    const { id, ...payload } = formData;
+    const { id, supplierStr, supplier, ...payload } = formData;
     payload.price = parseFloat(payload.price) || 0;
+    
+    if (supplierStr) {
+       payload.supplier = { id: parseInt(supplierStr) };
+    }
+
       
     fetch(url, {
       method,
@@ -129,6 +237,16 @@ const AdminDashboard = () => {
           {activeTab === 'categories' && (
             <button className="btn btn-primary btn-hover-anim" onClick={() => handleOpenCategoryModal()}>
               <Plus size={18}/> Add Category
+            </button>
+          )}
+          {activeTab === 'suppliers' && (
+            <button className="btn btn-primary btn-hover-anim" onClick={() => handleOpenSupplierModal()}>
+              <Plus size={18}/> Add Supplier
+            </button>
+          )}
+          {activeTab === 'users' && isSuperAdmin && (
+            <button className="btn btn-primary btn-hover-anim" onClick={() => setIsUserModalOpen(true)}>
+              <Plus size={18}/> Create User
             </button>
           )}
           {activeTab === 'products' && (
@@ -173,23 +291,33 @@ const AdminDashboard = () => {
           Products Data
         </button>
         <button 
-          className={`btn ${activeTab === 'users' ? 'btn-primary' : 'glass-panel'}`} 
-          onClick={() => setActiveTab('users')}
+          className={`btn ${activeTab === 'suppliers' ? 'btn-primary' : 'glass-panel'}`} 
+          onClick={() => setActiveTab('suppliers')}
         >
-          User Accounts
+          Manage Suppliers
         </button>
-        <button 
-          className={`btn ${activeTab === 'categories' ? 'btn-primary' : 'glass-panel'}`} 
-          onClick={() => setActiveTab('categories')}
-        >
-          Manage Categories
-        </button>
-        <button 
-          className={`btn ${activeTab === 'orders' ? 'btn-primary' : 'glass-panel'}`} 
-          onClick={() => setActiveTab('orders')}
-        >
-          Manage Orders
-        </button>
+        {isSuperAdmin && (
+          <>
+            <button 
+              className={`btn ${activeTab === 'users' ? 'btn-primary' : 'glass-panel'}`} 
+              onClick={() => setActiveTab('users')}
+            >
+              User Accounts
+            </button>
+            <button 
+              className={`btn ${activeTab === 'categories' ? 'btn-primary' : 'glass-panel'}`} 
+              onClick={() => setActiveTab('categories')}
+            >
+              Manage Categories
+            </button>
+            <button 
+              className={`btn ${activeTab === 'orders' ? 'btn-primary' : 'glass-panel'}`} 
+              onClick={() => setActiveTab('orders')}
+            >
+              Manage Orders
+            </button>
+          </>
+        )}
       </div>
 
       {/* Views */}
@@ -201,6 +329,7 @@ const AdminDashboard = () => {
                 <th>Image</th>
                 <th>Product Name</th>
                 <th>Category</th>
+                <th>Supplier</th>
                 <th>Price</th>
                 <th>Actions</th>
               </tr>
@@ -213,6 +342,7 @@ const AdminDashboard = () => {
                   </td>
                   <td style={{ fontWeight: 500 }}>{product.name}</td>
                   <td><span className="badge">{product.category}</span></td>
+                  <td>{product.supplier ? product.supplier.name : 'Unknown'}</td>
                   <td style={{ fontWeight: 'bold' }}>{product.price.toLocaleString('en-TN')} TND</td>
                   <td>
                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -244,9 +374,15 @@ const AdminDashboard = () => {
                   <td style={{ color: 'var(--text-muted)' }}>{order.date}</td>
                   <td style={{ fontWeight: 'bold' }}>{order.total.toLocaleString('en-TN')} TND</td>
                   <td>
-                    <span className="badge" style={{ backgroundColor: order.status === 'Cancelled' ? 'rgba(255, 71, 87, 0.2)' : 'var(--glass-border)', color: order.status === 'Cancelled' ? 'var(--danger)' : 'var(--text-main)' }}>
-                      {order.status}
-                    </span>
+                    {(() => {
+                      const statusData = STATUS_MAP[order.status] || STATUS_MAP['Processing'];
+                      const StatusIcon = statusData.icon;
+                      return (
+                        <span className="badge" style={{ background: 'transparent', border: `1px solid ${statusData.color}`, color: statusData.color, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <StatusIcon size={12} /> {order.status}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td>
                     {order.status !== 'Cancelled' && (
@@ -287,7 +423,33 @@ const AdminDashboard = () => {
               ))}
             </tbody>
           </table>
-        ) : (
+        ) : activeTab === 'suppliers' ? (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {suppliers.map(sup => (
+                <tr key={sup.id}>
+                  <td style={{ fontWeight: 500 }}>{sup.name}</td>
+                  <td>{sup.contactEmail}</td>
+                  <td>{sup.phone}</td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="btn-icon" onClick={() => handleOpenSupplierModal(sup)}><Edit size={16} /></button>
+                      <button className="btn-icon" style={{ color: 'var(--danger)' }} onClick={() => handleDeleteSupplier(sup.id)}><Trash2 size={16} /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : activeTab === 'users' && isSuperAdmin ? (
           <table className="admin-table">
             <thead>
               <tr>
@@ -295,6 +457,7 @@ const AdminDashboard = () => {
                 <th>Email</th>
                 <th>Role</th>
                 <th>Registered</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -308,24 +471,36 @@ const AdminDashboard = () => {
                       style={{ 
                         padding: '4px 8px', 
                         backgroundColor: 'var(--background)',
-                        color: u.role === 'ADMIN' ? 'var(--primary)' : 'var(--text-main)',
-                        borderColor: u.role === 'ADMIN' ? 'var(--primary)' : 'var(--border)',
+                        color: u.role === 'SUPER_ADMIN' ? 'var(--danger)' : u.role === 'ADMIN' ? 'var(--primary)' : 'var(--text-main)',
+                        borderColor: u.role === 'SUPER_ADMIN' ? 'var(--danger)' : u.role === 'ADMIN' ? 'var(--primary)' : 'var(--border)',
                         outline: 'none',
                         cursor: 'pointer'
                       }}
                       value={u.role}
                       onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                      disabled={u.id === user?.id} // Prevent changing own role easily
                     >
                       <option value="USER" style={{ color: 'var(--text-main)', backgroundColor: 'var(--surface)' }}>USER</option>
                       <option value="ADMIN" style={{ color: 'var(--primary)', backgroundColor: 'var(--surface)' }}>ADMIN</option>
+                      <option value="SUPER_ADMIN" style={{ color: 'var(--danger)', backgroundColor: 'var(--surface)' }}>SUPER_ADMIN</option>
                     </select>
                   </td>
                   <td>{u.registered}</td>
+                  <td>
+                    <button className="btn btn-primary btn-hover-anim" style={{ padding: '6px 12px', fontSize: '0.85rem' }} onClick={() => {
+                        const targetOrders = orders.filter(o => o.user === u.name).length;
+                        setManageUserStats({ ordersCount: targetOrders });
+                        setManageUserFormData({ userId: u.id, name: u.name, email: u.email, password: u.password, role: u.role });
+                        setIsManageUserModalOpen(true);
+                      }}>
+                      Manage User
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        )}
+        ) : null}
       </div>
 
       {/* Modal Profile */}
@@ -346,6 +521,12 @@ const AdminDashboard = () => {
                   value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required>
                   <option value="" disabled>Select Category</option>
                   {categoriesList.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                </select>
+                
+                <select className="glass-input" style={{ flex: 1, paddingLeft: '16px', backgroundColor: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
+                  value={formData.supplierStr} onChange={e => setFormData({...formData, supplierStr: e.target.value})}>
+                  <option value="">Select Supplier</option>
+                  {suppliers.map(sup => <option key={sup.id} value={sup.id.toString()}>{sup.name}</option>)}
                 </select>
               </div>
                 
@@ -381,6 +562,125 @@ const AdminDashboard = () => {
                 {editingCategoryName ? 'Save Changes' : 'Create Category'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+      
+      {isSupplierModalOpen && (
+        <div className="cart-overlay open" style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)' }}>
+          <div className="glass-panel" style={{ padding: 'var(--space-xl)', width: '100%', maxWidth: '400px', margin: '0 16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
+              <h3>{editingSupplier ? 'Edit Supplier' : 'Add New Supplier'}</h3>
+              <button className="btn-icon" onClick={() => setIsSupplierModalOpen(false)}><X size={20}/></button>
+            </div>
+            
+            <form onSubmit={handleSupplierSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+              <input type="text" placeholder="Supplier Name" className="glass-input" style={{ paddingLeft: '16px' }}
+                value={supplierFormData.name} onChange={e => setSupplierFormData({...supplierFormData, name: e.target.value})} autoFocus required/>
+                
+              <input type="email" placeholder="Contact Email (optional)" className="glass-input" style={{ paddingLeft: '16px' }}
+                value={supplierFormData.contactEmail} onChange={e => setSupplierFormData({...supplierFormData, contactEmail: e.target.value})} />
+                
+              <input type="text" placeholder="Phone (optional)" className="glass-input" style={{ paddingLeft: '16px' }}
+                value={supplierFormData.phone} onChange={e => setSupplierFormData({...supplierFormData, phone: e.target.value})} />
+                
+              <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
+                {editingSupplier ? 'Save Changes' : 'Create Supplier'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isUserModalOpen && (
+        <div className="cart-overlay open" style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)' }}>
+          <div className="glass-panel" style={{ padding: 'var(--space-xl)', width: '100%', maxWidth: '400px', margin: '0 16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
+              <h3>Create New User</h3>
+              <button className="btn-icon" onClick={() => setIsUserModalOpen(false)}><X size={20}/></button>
+            </div>
+            
+            <form onSubmit={handleUserSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+              <input type="text" placeholder="Full Name" className="glass-input" style={{ paddingLeft: '16px' }}
+                value={userFormData.name} onChange={e => setUserFormData({...userFormData, name: e.target.value})} required/>
+              <input type="email" placeholder="Email" className="glass-input" style={{ paddingLeft: '16px' }}
+                value={userFormData.email} onChange={e => setUserFormData({...userFormData, email: e.target.value})} required/>
+              <input type="password" placeholder="Mot de passe" className="glass-input" style={{ paddingLeft: '16px' }}
+                value={userFormData.password} onChange={e => setUserFormData({...userFormData, password: e.target.value})} required/>
+              <select className="glass-input" style={{ paddingLeft: '16px', backgroundColor: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
+                value={userFormData.role} onChange={e => setUserFormData({...userFormData, role: e.target.value})}>
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+                <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+              </select>
+              <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
+                Create User
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isManageUserModalOpen && (
+        <div className="cart-overlay open" style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)' }}>
+          <div className="glass-panel" style={{ padding: 'var(--space-xl)', width: '100%', maxWidth: '600px', margin: '0 16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
+              <h3>Manage User Details</h3>
+              <button className="btn-icon" onClick={() => setIsManageUserModalOpen(false)}><X size={20}/></button>
+            </div>
+            
+            <div style={{ display: 'flex', gap: 'var(--space-xl)', flexWrap: 'wrap' }}>
+              
+              <div style={{ flex: '1', minWidth: '200px' }}>
+                <h4 style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-sm)' }}>Platform Activity</h4>
+                <div className="glass-panel" style={{ padding: 'var(--space-md)', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                  <h1 style={{ color: 'var(--primary)', margin: 0 }}>{manageUserStats.ordersCount}</h1>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total Liftime Orders</span>
+                </div>
+                <div style={{ marginTop: 'var(--space-xl)' }}>
+                  <h4 style={{ color: 'var(--danger)', marginBottom: 'var(--space-sm)' }}>Danger Zone</h4>
+                  <button className="btn" type="button" 
+                          onClick={() => handleDeleteTargetUser(manageUserFormData.userId)}
+                          style={{ width: '100%', backgroundColor: 'rgba(255, 71, 87, 0.1)', color: 'var(--danger)', border: '1px solid var(--danger)' }}>
+                    Delete User Profile
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ flex: '2', minWidth: '250px' }}>
+                <form onSubmit={handleManageUserSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Full Name</label>
+                    <input type="text" className="glass-input" style={{ paddingLeft: '16px', marginTop: '4px' }}
+                      value={manageUserFormData.name} onChange={e => setManageUserFormData({...manageUserFormData, name: e.target.value})} required/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Email Address</label>
+                    <input type="email" className="glass-input" style={{ paddingLeft: '16px', marginTop: '4px' }}
+                      value={manageUserFormData.email} onChange={e => setManageUserFormData({...manageUserFormData, email: e.target.value})} required/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Mot de passe (Password)</label>
+                    <input type="text" className="glass-input" style={{ paddingLeft: '16px', marginTop: '4px' }}
+                      value={manageUserFormData.password} onChange={e => setManageUserFormData({...manageUserFormData, password: e.target.value})} required/>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Privilege Role</label>
+                    <select className="glass-input" style={{ paddingLeft: '16px', marginTop: '4px', backgroundColor: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
+                      disabled={manageUserFormData.userId === user?.id}
+                      value={manageUserFormData.role} onChange={e => setManageUserFormData({...manageUserFormData, role: e.target.value})}>
+                      <option value="USER">USER</option>
+                      <option value="ADMIN">ADMIN</option>
+                      <option value="SUPER_ADMIN">SUPER_ADMIN</option>
+                    </select>
+                  </div>
+                  <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
+                    Save Profile Changes
+                  </button>
+                </form>
+              </div>
+
+            </div>
           </div>
         </div>
       )}

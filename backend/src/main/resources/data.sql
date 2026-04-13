@@ -1,58 +1,53 @@
-INSERT INTO product (name, description, price, category, image_url) VALUES 
-('Premium Wireless Headphones', 'Experience high-fidelity audio with our noise-canceling wireless headphones. Perfect for music lovers and professionals.', 899.00, 'Electronics', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80'),
+INSERT INTO supplier (name, contact_email, phone) VALUES 
+('Apple Inc', 'support@apple.com', '+1-800-MY-APPLE'),
+('Samsung Electronics', 'b2b@samsung.com', '+1-800-SAMSUNG'),
+('Sony Corporation', 'wholesale@sony.com', '+1-800-222-SONY'),
+('IKEA Group', 'commercial@ikea.com', '+46-775-700-500'),
+('Penguin Random House', 'sales@penguin.com', '+1-800-733-3000'),
+('Nike Inc', 'info@nike.com', '+1-800-806-6453');
 
-('Minimalist Smartwatch', 'Track your fitness, receive notifications, and look stylish with this sleek smartwatch featuring a gorgeous OLED display.', 590.00, 'Electronics', 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&q=80'),
+INSERT INTO product (name, description, price, category, image_url, supplier_id) VALUES 
+('Smart WiFi Router Pro', 'Next-generation router equipped with Wi-Fi 6 technology for blazing fast, seamless connectivity across your entire home.', 199.99, 'Electronics', 'https://images.unsplash.com/photo-1544117519-31a4b719223d?w=800', 2),
+('4K Action Camera', 'Capture all your adventures in stunning 4K detail. Completely waterproof and features advanced hyper-smooth stabilization.', 349.50, 'Electronics', 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=800', 3),
 
-('Mechanical Gaming Keyboard', 'Tactile mechanical switches for satisfying typing and gaming. Customizable RGB lighting included.', 350.50, 'Electronics', 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=800&q=80'),
+('Scandinavian Velvet Sofa', 'Luxurious minimalism. Our premium velvet sofa brings European aesthetics and unbelievable comfort to your living space.', 1250.00, 'Furniture', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800', 4),
+('Ergonomic Office Chair', 'Breathable mesh back and fully adjustable lumbar support perfect for long hours of productive work.', 289.99, 'Furniture', 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=800', 4),
 
-('Vintage Film Camera', 'Capture breathtaking photos natively on 35mm film with this beautifully restored classic.', 1250.00, 'Electronics', 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80'),
+('Ceramic Minimalist Vase', 'Hand-crafted matte ceramic vase. Specifically designed to highlight your floral arrangements without overpowering them.', 45.00, 'Home', 'https://images.unsplash.com/photo-1581737748425-4c07b06d4ab8?w=800', 4),
+('Aromatherapy Diffuser', 'Sleek wood-grain diffuser combined with LED lighting modes, creating a relaxing spa-like environment at home.', 55.20, 'Home', 'https://images.unsplash.com/photo-1608508821935-cf2d815be553?w=800', 4),
 
-('Ergonomic Office Chair', 'Work comfortably all day. Features adjustable lumbar support, breathable mesh, and smooth-rolling casters.', 850.00, 'Furniture', 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=800&q=80'),
+('Classic Denim Jacket', 'Rugged, timeless, and versatile. Made from organic heavy-weight cotton to withstand the test of time.', 85.00, 'Clothing', 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800', 6),
+('Cotton Premium T-Shirt', 'The perfect blank canvas. Ridiculously soft, mid-weight cotton that perfectly drapes and retains its shape wash after wash.', 35.00, 'Clothing', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800', 6),
 
-('Minimalist Wooden Desk', 'Clean aesthetics meets functional workspace. Solid oak construction.', 1200.00, 'Furniture', 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80'),
+('The Design Everyday Things', 'A cognitive scientist details how design serves as the communication between object and user. A must read.', 19.99, 'Books', 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800', 5),
+('Clean Code Handbook', 'The modern bible for software developers looking to turn bad code into beautifully maintainable masterpieces.', 49.50, 'Books', 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800', 5),
 
-('Modern Accent Sofa', 'Add character to any living space with this deeply cushioned, vibrant yellow sofa.', 2450.00, 'Furniture', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80'),
+('Leather Bi-Fold Wallet', 'Genuine full-grain leather wallet featuring 6 card stots, RFID protection, and a sleek modern profile.', 65.00, 'Accessories', 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800', 6),
+('Polarized Sunglasses', 'UV400 protection wrapped in a classic retro acetate frame. Lightweight and incredibly highly durable.', 120.00, 'Accessories', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800', 6),
 
-('Midcentury Nightstand', 'Simple drawer and shelf functionality dressed in elegant dark walnut wood.', 320.00, 'Furniture', 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?w=800&q=80'),
+('Aura X Premium 256GB', 'A stunning smartphone crafted with aerospace-grade aluminum, edge-to-edge OLED display, and incredible battery life.', 999.00, 'Smartphones', 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800', 1),
+('Nova Foldable Mobile', 'Experience the future with a seamless folding glass display, allowing you to multi-task like never before on the go.', 1499.00, 'Smartphones', 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800', 2),
 
-('Ceramic Coffee Mug', 'Start your morning right. An artisanal ceramic mug, perfectly sized for your favorite brew.', 45.00, 'Home', 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=800&q=80'),
+('Wireless Over-Ear Headphones', 'Industry-leading noise cancellation combined with high-res audio drivers provides an unparalleled listening experience.', 299.00, 'Audio', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800', 3),
+('Studio Monitor IEMs', 'Precision-crafted in-ear monitors delivering flat frequency response tailored precisely for mixing engineers and audiophiles.', 149.00, 'Audio', 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800', 3),
 
-('Indoor Potted Monstera', 'Bring life into your home with this beautiful, easy-to-care-for tropical plant.', 120.00, 'Home', 'https://images.unsplash.com/photo-1588636544955-44248882a4d9?w=800&q=80'),
+('Fitness Tracker Pro', 'Monitor your heart rate, sleep cycles, and daily steps. Fully waterproof and features an impressive 14-day battery.', 79.99, 'Wearables', 'https://images.unsplash.com/photo-1575311373937-040b8e8f8ce9?w=800', 2),
+('Titanium Smart Watch', 'A premium wearable that blends classic chronometer aesthetics with modern LTE smart functionalities.', 399.00, 'Wearables', 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800', 1),
 
-('Geometric Throw Blanket', 'Stay warm and elevate your couch aesthetics with this woven throw blanket.', 95.00, 'Home', 'https://images.unsplash.com/photo-1580828343064-fde4cad20281?w=800&q=80'),
+('ZenBook Pro 15', 'Extremely lightweight ultrabook packing a serious punch with a dedicated GPU and a stunning 4K OLED screen.', 1899.00, 'Computers', 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800', 2),
+('Creator Mini Desktop', 'A compact powerhouse optimized for rendering, 3D workloads, and extreme multitasking without taking up desk space.', 1250.00, 'Computers', 'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=800', 2),
 
-('Premium Waffle Towel Set', 'Highly absorbent, ultra-soft luxury spa towels. Pack of 4.', 180.00, 'Home', 'https://images.unsplash.com/photo-1581005295594-e8fdb108d4b3?w=800&q=80'),
+('Mirrorless Hybrid Camera', 'Capture breathtaking 24MP photographs and cinematic 10-bit video in a compact weather-sealed body.', 1599.00, 'Photography', 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800', 3),
+('50mm Prime Lens F1.4', 'The perfect nifty fifty. Renowned for incredible background blurring, massive light gathering, and edge-to-edge sharpness.', 550.00, 'Photography', 'https://images.unsplash.com/photo-1616423640778-28d1b53229bd?w=800', 3),
 
-('Leather Weekend Canvas Bag', 'Durable canvas and genuine leather accents make this bag the perfect companion for quick getaways.', 350.00, 'Accessories', 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80'),
+('Mechanical Gaming Keyboard', 'Featuring tactile clicky switches, aircraft-grade aluminum frame, and customizable per-key RGB backlighting.', 129.99, 'Gaming', 'https://images.unsplash.com/photo-1595225476474-87563907a212?w=800', 3),
+('Wireless Console Controller', 'Haptic feedback and adaptive triggers put you right in the middle of your game. Includes long-lasting rechargeable battery.', 69.99, 'Gaming', 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=800', 3),
 
-('Classic Aviator Sunglasses', 'Polarized UV400 lenses housed in a lightweight, durable metal frame.', 210.00, 'Accessories', 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=800&q=80'),
+('65-Inch OLED 4K TV', 'Unmatched contrast ratios with perfect blacks and extremely vivid colors, equipped with smart TV operating system.', 2100.00, 'TV & Video', 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800', 3),
+('Portable LED Projector', 'Easily cast a 120-inch screen on any wall. Designed for outdoor movies, camping trips, and indoor entertainment.', 349.00, 'TV & Video', 'https://images.unsplash.com/photo-1626305988241-1f95d852a488?w=800', 2),
 
-('Minimalist Leather Wallet', 'Slim profile wallet crafted from top-grain leather. Holds 6 cards securely.', 150.00, 'Accessories', 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=800&q=80'),
+('Bluetooth Portable Speaker', 'Fills the room with rich 360-degree sound. Rugged exterior allows you to take your music absolutely anywhere.', 119.00, 'Speakers', 'https://images.unsplash.com/photo-1608043152269-41aa5302ca14?w=800', 3),
+('Home Theater Soundbar', 'A massive audio upgrade to any TV. Includes wireless subwoofer for deep, rumbling low frequencies during action scenes.', 450.00, 'Speakers', 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800', 3),
 
-('Cotton Crewneck T-Shirt', 'A premium, ultra-soft 100% organic cotton t-shirt for everyday wear.', 65.00, 'Clothing', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80'),
-
-('Vintage Denim Jacket', 'Classic washes and rugged construction on a timeless wardrobe staple.', 280.00, 'Clothing', 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&q=80'),
-
-('Athletic Running Sneakers', 'Lightweight, breathable, and designed for maximum comfort over long distances.', 420.00, 'Clothing', 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80'),
-
-('The Pragmatic Programmer', 'One of the most significant books in software engineering. A must-read for any modern developer.', 160.00, 'Books', 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=80'),
-
-('Design of Everyday Things', 'Don Norman''s landmark book on usability and design psychology.', 135.00, 'Books', 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=800&q=80'),
-
-('Flagship Android Smartphone', 'The latest edge-to-edge display with an incredible multi-lens camera system.', 1100.00, 'Smartphones', 'https://images.unsplash.com/photo-1598327105666-5b89351cb31b?w=800&q=80'),
-
-('Wireless Studio Monitors', 'Professional grade studio audio reproduction in a sleek wireless format.', 499.00, 'Audio', 'https://images.unsplash.com/photo-1545127398-14699f92334b?w=800&q=80'),
-
-('Fitness Tracker Band', 'Monitor your steps, heart rate, and sleep with week-long battery life.', 120.00, 'Wearables', 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b0?w=800&q=80'),
-
-('High-Performance Laptop', 'A powerhouse computer built for gaming, rendering, and heavy multitasking.', 2400.00, 'Computers', 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&q=80'),
-
-('Mirrorless Digital Camera', 'Compact body featuring full-frame sensor and interchangeable lenses.', 1800.00, 'Photography', 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80'),
-
-('Next-Gen Game Console', 'Experience immersive 4K gaming with ultra-fast SSD load times.', 500.00, 'Gaming', 'https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&q=80'),
-
-('4K OLED Smart TV', 'Stunning contrast and vibrant colors on a gorgeous 65-inch OLED display.', 1499.00, 'TV & Video', 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&q=80'),
-
-('Portable Bluetooth Speaker', 'Waterproof, rugged, and sounds incredible. Take your music anywhere.', 149.00, 'Speakers', 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&q=80'),
-
-('Stylus-Enabled Tablet', 'Perfect for drawing, note-taking, and media consumption on the go.', 650.00, 'Tablets', 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&q=80');
+('Stylus 11-inch Pad', 'Digital canvas engineered for artists. Ultra-responsive screen paired with an active magnetic stylus pen.', 599.00, 'Tablets', 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800', 1),
+('E-Ink Reader Pro', 'Read absolutely glare-free even in direct sunlight. Includes warm-light adjustments and a massive 32GB library storage.', 149.00, 'Tablets', 'https://images.unsplash.com/photo-1589739900266-43b2843f4c12?w=800', 2);

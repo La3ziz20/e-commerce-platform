@@ -13,8 +13,11 @@ const STATUS_MAP = {
 
 const Orders = () => {
   const { orders, updateOrderStatus } = useCart();
-  const { user } = useAuth() || {};
-  const isAdmin = user?.role === 'ADMIN';
+  const { user, isSuperAdmin } = useAuth() || {};
+  
+  // Only Super Admins can see and manage everyone's orders.
+  // Normal users and standard Admins only see their personal shopping history.
+  const displayOrders = isSuperAdmin ? (orders || []) : (orders || []).filter(o => o.user === (user?.name || 'Guest'));
 
   const handleStatusChange = (orderId, newStatus) => {
     updateOrderStatus(orderId, newStatus);
@@ -25,10 +28,10 @@ const Orders = () => {
     <>
       <div style={{ marginBottom: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2>{isAdmin ? 'All Orders Management' : 'Your Order History'}</h2>
-          <span style={{ color: 'var(--text-muted)' }}>{orders.length} Recent Orders</span>
+          <h2>{isSuperAdmin ? 'All Orders Management' : 'Your Order History'}</h2>
+          <span style={{ color: 'var(--text-muted)' }}>{displayOrders.length} Recent Orders</span>
         </div>
-        {isAdmin && <span className="badge" style={{ backgroundColor: 'var(--primary)', padding: '6px 12px' }}>Admin Mode</span>}
+        {isSuperAdmin && <span className="badge" style={{ backgroundColor: 'var(--primary)', padding: '6px 12px' }}>Admin Mode</span>}
       </div>
 
       <div className="glass-panel" style={{ overflowX: 'auto', padding: 'var(--space-md)' }}>
@@ -36,27 +39,29 @@ const Orders = () => {
           <thead>
             <tr>
               <th>Order ID</th>
-              {isAdmin && <th>Customer</th>}
+              {isSuperAdmin && <th>Customer</th>}
               <th>Date</th>
               <th>Total Amount</th>
               <th>Tracking Status</th>
             </tr>
           </thead>
           <tbody>
-            {orders.map(order => {
-              const statusData = STATUS_MAP[order.status];
+            {(displayOrders || []).map(order => {
+              const statusData = STATUS_MAP[order.status] || STATUS_MAP['Processing'];
               const StatusIcon = statusData.icon;
               
               return (
                 <tr key={order.id}>
-                  <td style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Package size={16} color="var(--primary)" /> {order.id}
+                  <td style={{ fontWeight: 500 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Package size={16} color="var(--primary)" /> {order.id}
+                    </div>
                   </td>
-                  {isAdmin && <td style={{ color: 'var(--text-muted)' }}>{order.user}</td>}
+                  {isSuperAdmin && <td style={{ color: 'var(--text-muted)' }}>{order.user}</td>}
                   <td style={{ color: 'var(--text-muted)' }}>{order.date}</td>
-                  <td style={{ fontWeight: 'bold' }}>{order.total.toLocaleString('en-TN', { style: 'currency', currency: 'TND' })}</td>
+                  <td style={{ fontWeight: 'bold' }}>{(order.total || 0).toLocaleString('en-TN', { style: 'currency', currency: 'TND' })}</td>
                   <td>
-                    {isAdmin ? (
+                    {isSuperAdmin ? (
                       <select 
                         className="glass-input" 
                         style={{ 
