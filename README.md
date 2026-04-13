@@ -1,10 +1,5 @@
 # Aura E-Commerce Platform
 
-<div style="display: flex; gap: 10px%;">
-  <img src="./demo.webp" alt="Aura Platform Demo" width="45%" />
-  <img src="./demo_rbac.webp" alt="RBAC Admin Demo" width="45%" />
-</div>
-
 Aura is a modern, responsive, full-stack e-commerce web application meticulously designed with a Glassmorphism aesthetic featuring a comprehensive Admin Dashboard with strict Tiered Role-Based Access Control, dedicated supplier integrations, secure checkout flows, dynamic product evaluations, and a built-in dark/light mode toggle.
 
 ## Core Features
