@@ -3,16 +3,18 @@
 Aura is a modern, responsive, full-stack e-commerce web application meticulously designed with a Glassmorphism aesthetic featuring a comprehensive Admin Dashboard with strict Tiered Role-Based Access Control, dedicated supplier integrations, secure checkout flows, dynamic product evaluations, and a built-in dark/light mode toggle.
 
 ## Core Features
+* **Full-Stack Authentication**: Secure user registration, robust login logic, and a full 6-digit email verification flow.
+* **Tiered User Management**: Complete CRUD governance allowing Super Admins to instantly modify user roles, delete accounts, and manage platform access.
+* **Automated Email Notifications**: Deep JavaMailSender integration automatically firing personalized welcome emails, order status changes, new product alerts, and admin notifications via SMTP.
 * **Interactive Product Ratings**: Embedded 1-5 Star interactive module mapping subjective reviews entirely to persistent Spring Boot data stores.
 * **Dynamic Category Management**: Powerful CRUD environment enabling administrators to infinitely govern overarching site categories natively.
-* **Persistent Cart & Wishlist**: Real-time context API arrays mapped to responsive localized storage caches.
-* **Complete Order Governance**: Direct interaction allowing administrative-level order cancellations instantly rippling across unified UI structures.
+* **Complete Order Governance**: Direct interaction allowing administrative-level order cancellations and real-time status updates instantly rippling across unified UI structures.
 * **Robust Theme Toggle**: Switch instantly between beautifully optimized Light Mode and Dark Mode parameters.
 
 ## Tech Stack
 * **Frontend**: React, Vite, React Router DOM, Context API, Lucide React (Icons), Native CSS (`var(...)` CSS Theming).
-* **Backend**: Spring Boot, Spring Data JPA, H2 Database (In-Memory), Jackson, Maven.
-* **Persistence Layer**: `@Entity` ORM schema definitions running continuously synchronized with automated standard JDBC updates.
+* **Backend**: Spring Boot, Spring Data JPA, JavaMailSender, Jackson, Maven.
+* **Persistence Layer**: MySQL (via XAMPP) natively handling relational data with `@Entity` ORM schema definitions and automated JDBC updates.
 
 ## Setup & Run Instructions
 
@@ -20,6 +22,12 @@ Aura is a modern, responsive, full-stack e-commerce web application meticulously
 Ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (latest LTS)
 - [Java Development Kit (JDK) 17+](https://adoptium.net/)
+- [XAMPP](https://www.apachefriends.org/) (for local MySQL database)
+
+### 2. Database Setup
+1. Open XAMPP and start the **MySQL** module.
+2. The Spring Boot application is configured to automatically create the `ecommercedb` database and its tables on startup if they don't exist.
+3. Ensure you have your `application.properties` updated with a valid Gmail App Password to enable the email system.
 
 ### 2. Run the Backend (Spring Boot)
 Open a terminal in the `backend/` directory and execute the Maven wrapper:

@@ -13,8 +13,8 @@ INSERT INTO product (name, description, price, category, image_url, supplier_id)
 ('Scandinavian Velvet Sofa', 'Luxurious minimalism. Our premium velvet sofa brings European aesthetics and unbelievable comfort to your living space.', 1250.00, 'Furniture', 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800', 4),
 ('Ergonomic Office Chair', 'Breathable mesh back and fully adjustable lumbar support perfect for long hours of productive work.', 289.99, 'Furniture', 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?w=800', 4),
 
-('Ceramic Minimalist Vase', 'Hand-crafted matte ceramic vase. Specifically designed to highlight your floral arrangements without overpowering them.', 45.00, 'Home', 'https://images.unsplash.com/photo-1581737748425-4c07b06d4ab8?w=800', 4),
-('Aromatherapy Diffuser', 'Sleek wood-grain diffuser combined with LED lighting modes, creating a relaxing spa-like environment at home.', 55.20, 'Home', 'https://images.unsplash.com/photo-1608508821935-cf2d815be553?w=800', 4),
+('Ceramic Minimalist Vase', 'Hand-crafted matte ceramic vase. Specifically designed to highlight your floral arrangements without overpowering them.', 45.00, 'Home', 'https://th.bing.com/th/id/OIP.W_Vu-NdEG711Bcj1YiCrOgHaHa?w=209&h=209&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3', 4),
+('Aromatherapy Diffuser', 'Sleek wood-grain diffuser combined with LED lighting modes, creating a relaxing spa-like environment at home.', 55.20, 'Home', 'https://th.bing.com/th/id/OIP.LfSm4x-KuapW9cHruV8lnAHaHa?w=188&h=188&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3', 4),
 
 ('Classic Denim Jacket', 'Rugged, timeless, and versatile. Made from organic heavy-weight cotton to withstand the test of time.', 85.00, 'Clothing', 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800', 6),
 ('Cotton Premium T-Shirt', 'The perfect blank canvas. Ridiculously soft, mid-weight cotton that perfectly drapes and retains its shape wash after wash.', 35.00, 'Clothing', 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800', 6),
@@ -31,7 +31,7 @@ INSERT INTO product (name, description, price, category, image_url, supplier_id)
 ('Wireless Over-Ear Headphones', 'Industry-leading noise cancellation combined with high-res audio drivers provides an unparalleled listening experience.', 299.00, 'Audio', 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800', 3),
 ('Studio Monitor IEMs', 'Precision-crafted in-ear monitors delivering flat frequency response tailored precisely for mixing engineers and audiophiles.', 149.00, 'Audio', 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800', 3),
 
-('Fitness Tracker Pro', 'Monitor your heart rate, sleep cycles, and daily steps. Fully waterproof and features an impressive 14-day battery.', 79.99, 'Wearables', 'https://images.unsplash.com/photo-1575311373937-040b8e8f8ce9?w=800', 2),
+('Fitness Tracker Pro', 'Monitor your heart rate, sleep cycles, and daily steps. Fully waterproof and features an impressive 14-day battery.', 79.99, 'Wearables', 'https://th.bing.com/th/id/OIP.o4iIPD5xL0DppS7e7-8WrQHaHa?w=168&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3', 2),
 ('Titanium Smart Watch', 'A premium wearable that blends classic chronometer aesthetics with modern LTE smart functionalities.', 399.00, 'Wearables', 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800', 1),
 
 ('ZenBook Pro 15', 'Extremely lightweight ultrabook packing a serious punch with a dedicated GPU and a stunning 4K OLED screen.', 1899.00, 'Computers', 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800', 2),
@@ -44,9 +44,9 @@ INSERT INTO product (name, description, price, category, image_url, supplier_id)
 ('Wireless Console Controller', 'Haptic feedback and adaptive triggers put you right in the middle of your game. Includes long-lasting rechargeable battery.', 69.99, 'Gaming', 'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=800', 3),
 
 ('65-Inch OLED 4K TV', 'Unmatched contrast ratios with perfect blacks and extremely vivid colors, equipped with smart TV operating system.', 2100.00, 'TV & Video', 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800', 3),
-('Portable LED Projector', 'Easily cast a 120-inch screen on any wall. Designed for outdoor movies, camping trips, and indoor entertainment.', 349.00, 'TV & Video', 'https://images.unsplash.com/photo-1626305988241-1f95d852a488?w=800', 2),
+('Portable LED Projector', 'Easily cast a 120-inch screen on any wall. Designed for outdoor movies, camping trips, and indoor entertainment.', 349.00, 'TV & Video', 'https://th.bing.com/th/id/OIP.LEsj5FQfgkCR_jm5H7qCUQHaF1?w=230&h=182&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3', 2),
 
-('Bluetooth Portable Speaker', 'Fills the room with rich 360-degree sound. Rugged exterior allows you to take your music absolutely anywhere.', 119.00, 'Speakers', 'https://images.unsplash.com/photo-1608043152269-41aa5302ca14?w=800', 3),
+('Bluetooth Portable Speaker', 'Fills the room with rich 360-degree sound. Rugged exterior allows you to take your music absolutely anywhere.', 119.00, 'Speakers', 'https://th.bing.com/th/id/OIP.sJhOvSGxp1Fv_5VTX_ZYgAHaDt?w=258&h=150&c=6&o=7&dpr=1.3&pid=1.7&rm=3', 3),
 ('Home Theater Soundbar', 'A massive audio upgrade to any TV. Includes wireless subwoofer for deep, rumbling low frequencies during action scenes.', 450.00, 'Speakers', 'https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800', 3),
 
 ('Stylus 11-inch Pad', 'Digital canvas engineered for artists. Ultra-responsive screen paired with an active magnetic stylus pen.', 599.00, 'Tablets', 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800', 1),

@@ -5,44 +5,18 @@ const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-const initialMockUsers = [
-  { id: 1, name: "Aziz M.", email: "aziz@aura.com", password: "password123", role: "SUPER_ADMIN", registered: "2026-03-12" },
-  { id: 2, name: "Sarah K.", email: "sarah@example.com", password: "password123", role: "USER", registered: "2026-03-15" },
-  { id: 3, name: "Mohamed L.", email: "mohamed@example.com", password: "password123", role: "USER", registered: "2026-04-01" },
-  { id: 4, name: "Admin", email: "admin@aura.com", password: "password123", role: "SUPER_ADMIN", registered: "2026-03-01" },
-];
-
 export const AuthProvider = ({ children }) => {
-  // Load users from localStorage or hit initial defaults
-  const [users, setUsers] = useState(() => {
-    const saved = localStorage.getItem('aura_users');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      // Migrate old users from previous sessions that lacked the new fields:
-      return parsed.map(u => {
-        let updatedUser = { ...u };
-        if (!updatedUser.password) updatedUser.password = "password123";
-        if (updatedUser.email === "admin@aura.com" && updatedUser.role === "ADMIN") updatedUser.role = "SUPER_ADMIN";
-        if (updatedUser.email === "aziz@aura.com" && updatedUser.role === "ADMIN") updatedUser.role = "SUPER_ADMIN";
-        return updatedUser;
-      });
-    }
-    return initialMockUsers;
-  });
-
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('aura_current_user');
     return saved ? JSON.parse(saved) : null;
   });
 
+  const [users, setUsers] = useState([]);
+
   const [categoriesList, setCategoriesList] = useState(() => {
     const saved = localStorage.getItem('aura_categories_list');
     return saved ? JSON.parse(saved) : CATEGORY_NAMES;
   });
-
-  useEffect(() => {
-    localStorage.setItem('aura_users', JSON.stringify(users));
-  }, [users]);
 
   useEffect(() => {
     if (user) {
@@ -56,37 +30,117 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('aura_categories_list', JSON.stringify(categoriesList));
   }, [categoriesList]);
 
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/users');
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch users", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
   const isSuperAdmin = user?.role === "SUPER_ADMIN";
 
-  const login = (email, password) => {
-    const foundUser = users.find(u => u.email === email);
-    if (foundUser && foundUser.password === password) {
-      setUser(foundUser);
+  const login = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
+
+  const register = async (userData) => {
+    const response = await fetch('http://localhost:8080/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    if (!response.ok) throw new Error("Registration failed");
+    fetchUsers(); // Refresh users list
+    return true;
+  };
+
+  const verifyEmail = async (email, code) => {
+    const response = await fetch('http://localhost:8080/api/auth/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code })
+    });
+    if (response.ok) {
+      const data = await response.json();
+      setUser(data);
+      fetchUsers(); // Refresh users list
       return true;
     }
     return false;
-  };
-
-  const register = (userData) => {
-    const newUser = {
-      ...userData,
-      password: userData.password || "password123",
-      id: Date.now(),
-      registered: new Date().toISOString().split('T')[0]
-    };
-    setUsers(prev => [...prev, newUser]);
-    setUser(newUser);
   };
 
   const logout = () => {
     setUser(null);
   };
 
-  const updateRole = (userId, newRole) => {
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
-    if (user && user.id === userId) {
-      setUser(prev => ({ ...prev, role: newRole }));
+  const updateRole = async (userId, newRole) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/users/${userId}/role`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+        if (user && user.id === userId) setUser(prev => ({ ...prev, role: newRole }));
+      }
+    } catch (e) {
+      console.error("Failed to update role", e);
+    }
+  };
+
+  const editUser = async (userId, updatedData) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+      });
+      if (res.ok) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, ...updatedData } : u));
+        if (user && user.id === userId) setUser(prev => ({ ...prev, ...updatedData }));
+      }
+    } catch (e) {
+      console.error("Failed to edit user", e);
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/users/${userId}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u.id !== userId));
+        if (user && user.id === userId) setUser(null);
+      }
+    } catch (e) {
+      console.error("Failed to delete user", e);
     }
   };
 
@@ -104,23 +158,8 @@ export const AuthProvider = ({ children }) => {
     setCategoriesList(prev => prev.filter(c => c !== categoryName));
   };
 
-  const editUser = (userId, updatedData) => {
-    setUsers(prev => prev.map(u => u.id === userId ? { ...u, ...updatedData } : u));
-    if (user && user.id === userId) {
-       setUser(prev => ({ ...prev, ...updatedData }));
-    }
-  };
-
-  const deleteUser = (userId) => {
-    setUsers(prev => prev.filter(u => u.id !== userId));
-    // Provide safeguards if a super admin deletes themselves
-    if (user && user.id === userId) {
-      setUser(null);
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ user, users, isAdmin, isSuperAdmin, login, register, logout, updateRole, editUser, deleteUser, categoriesList, addCategory, editCategory, deleteCategory }}>
+    <AuthContext.Provider value={{ user, users, isAdmin, isSuperAdmin, login, register, verifyEmail, logout, updateRole, editUser, deleteUser, categoriesList, addCategory, editCategory, deleteCategory }}>
       {children}
     </AuthContext.Provider>
   );

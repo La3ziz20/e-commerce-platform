@@ -2,12 +2,6 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
 
-const initialOrders = [
-  { id: 'ORD-2026-901', date: '2026-04-10', total: 1199.99, status: 'Processing', user: 'Aziz M.' },
-  { id: 'ORD-2026-885', date: '2026-04-05', total: 45.00, status: 'Shipped', user: 'Sarah K.' },
-  { id: 'ORD-2026-721', date: '2026-03-22', total: 899.50, status: 'Delivered', user: 'Mohamed L.' }
-];
-
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(() => {
     const savedCart = localStorage.getItem('cart');
@@ -16,18 +10,19 @@ export function CartProvider({ children }) {
   
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const [orders, setOrders] = useState(() => {
-    const savedOrders = localStorage.getItem('aura_orders');
-    return savedOrders ? JSON.parse(savedOrders) : initialOrders;
-  });
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
   useEffect(() => {
-    localStorage.setItem('aura_orders', JSON.stringify(orders));
-  }, [orders]);
+    // Fetch orders from backend
+    fetch('http://localhost:8080/api/orders')
+      .then(res => res.json())
+      .then(data => setOrders(data))
+      .catch(err => console.error("Failed to fetch orders", err));
+  }, []);
 
   const addToCart = (product) => {
     setCartItems(prev => {
@@ -50,7 +45,7 @@ export function CartProvider({ children }) {
     setCartItems([]);
   };
 
-  const placeOrder = (user) => {
+  const placeOrder = async (user) => {
     if (cartItems.length === 0) return null;
     
     const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -59,16 +54,47 @@ export function CartProvider({ children }) {
       date: new Date().toISOString().split('T')[0],
       total: total,
       status: 'Processing',
-      user: user?.name || 'Guest'
+      userName: user?.name || 'Guest',
+      userEmail: user?.email || '',
+      items: cartItems.map(item => ({
+        productId: item.id,
+        productName: item.name,
+        price: item.price,
+        quantity: item.quantity
+      }))
     };
     
-    setOrders(prev => [newOrder, ...prev]);
-    clearCart();
-    return newOrder;
+    try {
+      const response = await fetch('http://localhost:8080/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrder)
+      });
+      if (response.ok) {
+        const savedOrder = await response.json();
+        setOrders(prev => [savedOrder, ...prev]);
+        clearCart();
+        return savedOrder;
+      }
+    } catch (e) {
+      console.error("Failed to place order", e);
+    }
+    return null;
   };
 
-  const updateOrderStatus = (orderId, newStatus) => {
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+  const updateOrderStatus = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/orders/${orderId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (response.ok) {
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      }
+    } catch (e) {
+      console.error("Failed to update order status", e);
+    }
   };
 
   const updateQuantity = (id, delta) => {
