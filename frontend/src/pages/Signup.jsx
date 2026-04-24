@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, UserPlus, User, Key } from 'lucide-react';
+import { Mail, Lock, UserPlus, User, Key, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   
@@ -76,13 +77,16 @@ const Signup = () => {
               <div className="input-group">
                 <Lock className="input-icon" size={20} />
                 <input 
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   placeholder="Create Password" 
                   className="glass-input" 
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   required
                 />
+                <button type="button" className="btn-icon" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
               
               <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)', width: '100%' }}>

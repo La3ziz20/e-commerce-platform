@@ -3,6 +3,7 @@ package com.ecommerce.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Async
     public void sendVerificationEmail(String toEmail, String code) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
@@ -22,6 +24,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendWelcomeEmail(String toEmail, String userName) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
@@ -31,6 +34,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendUserDeletedEmail(String toEmail, String userName) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
@@ -40,6 +44,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendRoleUpdateEmail(String toEmail, String userName, String newRole) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
@@ -49,6 +54,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendNewProductEmailToAllUsers(List<String> userEmails, String productName) {
         for (String email : userEmails) {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -60,6 +66,7 @@ public class EmailService {
         }
     }
 
+    @Async
     public void sendOrderStatusUpdate(String toEmail, String orderId, String status) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
@@ -69,6 +76,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendAdminAlerts(String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
@@ -78,12 +86,32 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    @Async
     public void sendSuperAdminAlerts(String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("aura.55697648@gmail.com");
         message.setTo("aura.55697648@gmail.com");
         message.setSubject("SUPER ADMIN ALERT: " + subject);
         message.setText(body);
+        mailSender.send(message);
+    }
+
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String code) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("aura.55697648@gmail.com");
+        message.setTo(toEmail);
+        message.setSubject("Password Reset Request");
+        message.setText("We received a request to reset your password. Your reset code is: " + code + "\n\nIf you did not request this, please ignore this email.");
+        mailSender.send(message);
+    }
+    @Async
+    public void sendOrderConfirmationEmail(String toEmail, String orderId, double total) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("aura.55697648@gmail.com");
+        message.setTo(toEmail);
+        message.setSubject("Order Confirmation - " + orderId);
+        message.setText("Thank you for your order!\n\nYour order " + orderId + " has been confirmed and is currently being processed.\nTotal: " + total + " TND\n\nThank you for shopping with Aura!");
         mailSender.send(message);
     }
 }

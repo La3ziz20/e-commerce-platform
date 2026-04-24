@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Users, ShoppingBag, Edit, Trash2, Plus, X, Briefcase } from 'lucide-react';
+import { Package, Users, ShoppingBag, Edit, Trash2, Plus, X, Briefcase, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { CATEGORY_NAMES } from '../data/categories';
 import { useAuth } from '../components/AuthContext';
@@ -36,10 +36,14 @@ const AdminDashboard = () => {
   const [isManageUserModalOpen, setIsManageUserModalOpen] = useState(false);
   const [manageUserFormData, setManageUserFormData] = useState({ userId: null, name: '', email: '', password: '', role: '' });
   const [manageUserStats, setManageUserStats] = useState({ ordersCount: 0 });
+  const [showUserPassword, setShowUserPassword] = useState(false);
+  const [showManageUserPassword, setShowManageUserPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '', category: '', description: '', price: '', imageUrl: '', supplierStr: ''
   });
+
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
 
   const todayStr = new Date().toISOString().split('T')[0];
   const ordersToday = orders ? orders.filter(o => o.date === todayStr).length : 0;
@@ -62,15 +66,20 @@ const AdminDashboard = () => {
   }, []);
 
   const handleDelete = (id) => {
-    if(!window.confirm("Are you sure you want to delete this product?")) return;
-    
-    fetch(`http://localhost:8080/api/products/${id}`, { method: 'DELETE' })
-      .then(res => {
-        if(res.ok) {
-          setProducts(products.filter(p => p.id !== id));
-          toast.success("Product deleted successfully");
-        } else throw new Error("Failed to delete");
-      }).catch(err => toast.error(err.message));
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Product',
+      message: 'Are you sure you want to delete this product?',
+      onConfirm: () => {
+        fetch(`http://localhost:8080/api/products/${id}`, { method: 'DELETE' })
+          .then(res => {
+            if(res.ok) {
+              setProducts(products.filter(p => p.id !== id));
+              toast.success("Product deleted successfully");
+            } else throw new Error("Failed to delete");
+          }).catch(err => toast.error(err.message));
+      }
+    });
   };
 
   const handleRoleChange = (userId, newRole) => {
@@ -124,9 +133,15 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteCategory = (catName) => {
-    if(!window.confirm(`Are you sure you want to delete the category "${catName}"?`)) return;
-    deleteCategory(catName);
-    toast.success("Category deleted!");
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Category',
+      message: `Are you sure you want to delete the category "${catName}"?`,
+      onConfirm: () => {
+        deleteCategory(catName);
+        toast.success("Category deleted!");
+      }
+    });
   };
 
   const handleSupplierSubmit = (e) => {
@@ -154,22 +169,32 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteSupplier = (id) => {
-    if(!window.confirm("Are you sure you want to delete this supplier?")) return;
-    fetch(`http://localhost:8080/api/suppliers/${id}`, { method: 'DELETE' })
-      .then(res => {
-        if(res.ok) {
-          setSuppliers(suppliers.filter(s => s.id !== id));
-          toast.success("Supplier deleted!");
-        } else throw new Error("Failed to delete (might be linked to products)");
-      }).catch(err => toast.error(err.message));
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Supplier',
+      message: 'Are you sure you want to delete this supplier?',
+      onConfirm: () => {
+        fetch(`http://localhost:8080/api/suppliers/${id}`, { method: 'DELETE' })
+          .then(res => {
+            if(res.ok) {
+              setSuppliers(suppliers.filter(s => s.id !== id));
+              toast.success("Supplier deleted!");
+            } else throw new Error("Failed to delete (might be linked to products)");
+          }).catch(err => toast.error(err.message));
+      }
+    });
   };
 
-  const handleUserSubmit = (e) => {
+  const handleUserSubmit = async (e) => {
     e.preventDefault();
-    register({ name: userFormData.name, email: userFormData.email, password: userFormData.password, role: userFormData.role });
-    toast.success("User created successfully!");
-    setIsUserModalOpen(false);
-    setUserFormData({ name: '', email: '', password: '', role: 'USER' });
+    try {
+      await register({ name: userFormData.name, email: userFormData.email, password: userFormData.password, role: userFormData.role });
+      toast.success("User created successfully!");
+      setIsUserModalOpen(false);
+      setUserFormData({ name: '', email: '', password: '', role: 'USER' });
+    } catch (err) {
+      toast.error(err.message || "Failed to create user");
+    }
   };
 
   const handleManageUserSubmit = (e) => {
@@ -185,10 +210,16 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteTargetUser = (userId) => {
-    if(!window.confirm("Are you critically sure you want to permanently delete this user?")) return;
-    deleteUser(userId);
-    toast.success("User deleted successfully!");
-    setIsManageUserModalOpen(false);
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete User',
+      message: 'Are you critically sure you want to permanently delete this user?',
+      onConfirm: () => {
+        deleteUser(userId);
+        toast.success("User deleted successfully!");
+        setIsManageUserModalOpen(false);
+      }
+    });
   };
 
   const handleSubmit = (e) => {
@@ -388,10 +419,15 @@ const AdminDashboard = () => {
                     {order.status !== 'Cancelled' && (
                       <button className="btn btn-primary btn-hover-anim" style={{ padding: '6px 12px', fontSize: '0.8rem', background: 'var(--danger)', color: 'white', border: 'none' }} 
                         onClick={() => {
-                          if (window.confirm('Are you sure you want to cancel this order?')) {
-                            updateOrderStatus(order.id, 'Cancelled');
-                            toast.success(`Order ${order.id} cancelled`);
-                          }
+                          setConfirmDialog({
+                            isOpen: true,
+                            title: 'Cancel Order',
+                            message: 'Are you sure you want to cancel this order?',
+                            onConfirm: () => {
+                              updateOrderStatus(order.id, 'Cancelled');
+                              toast.success(`Order ${order.id} cancelled`);
+                            }
+                          });
                         }}>
                         Cancel Order
                       </button>
@@ -605,8 +641,13 @@ const AdminDashboard = () => {
                 value={userFormData.name} onChange={e => setUserFormData({...userFormData, name: e.target.value})} required/>
               <input type="email" placeholder="Email" className="glass-input" style={{ paddingLeft: '16px' }}
                 value={userFormData.email} onChange={e => setUserFormData({...userFormData, email: e.target.value})} required/>
-              <input type="password" placeholder="Mot de passe" className="glass-input" style={{ paddingLeft: '16px' }}
-                value={userFormData.password} onChange={e => setUserFormData({...userFormData, password: e.target.value})} required/>
+              <div style={{ position: 'relative' }}>
+                <input type={showUserPassword ? "text" : "password"} placeholder="Mot de passe" className="glass-input" style={{ paddingLeft: '16px', width: '100%' }}
+                  value={userFormData.password} onChange={e => setUserFormData({...userFormData, password: e.target.value})} required/>
+                <button type="button" className="btn-icon" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => setShowUserPassword(!showUserPassword)}>
+                  {showUserPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               <select className="glass-input" style={{ paddingLeft: '16px', backgroundColor: 'var(--surface)', color: 'var(--text-main)', cursor: 'pointer' }}
                 value={userFormData.role} onChange={e => setUserFormData({...userFormData, role: e.target.value})}>
                 <option value="USER">USER</option>
@@ -661,8 +702,13 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Mot de passe (Password)</label>
-                    <input type="text" className="glass-input" style={{ paddingLeft: '16px', marginTop: '4px' }}
-                      value={manageUserFormData.password} onChange={e => setManageUserFormData({...manageUserFormData, password: e.target.value})} required/>
+                    <div style={{ position: 'relative', marginTop: '4px' }}>
+                      <input type={showManageUserPassword ? "text" : "password"} className="glass-input" style={{ paddingLeft: '16px', width: '100%' }}
+                        value={manageUserFormData.password} onChange={e => setManageUserFormData({...manageUserFormData, password: e.target.value})} required/>
+                      <button type="button" className="btn-icon" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => setShowManageUserPassword(!showManageUserPassword)}>
+                        {showManageUserPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Privilege Role</label>
@@ -680,6 +726,42 @@ const AdminDashboard = () => {
                 </form>
               </div>
 
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Confirmation Modal Card */}
+      {confirmDialog.isOpen && (
+        <div className="cart-overlay open" style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999 }}>
+          <div className="glass-panel" style={{ padding: 'var(--space-xl)', width: '100%', maxWidth: '400px', margin: '0 16px', textAlign: 'center' }}>
+            <div style={{ marginBottom: 'var(--space-lg)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-md)' }}>
+                <div style={{ background: 'rgba(255, 71, 87, 0.1)', padding: '16px', borderRadius: '50%' }}>
+                  <Trash2 color="var(--danger)" size={32} />
+                </div>
+              </div>
+              <h3>{confirmDialog.title}</h3>
+              <p style={{ color: 'var(--text-muted)', marginTop: 'var(--space-sm)' }}>{confirmDialog.message}</p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'center' }}>
+              <button 
+                className="btn glass-panel" 
+                onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary btn-hover-anim" 
+                onClick={() => {
+                  if (confirmDialog.onConfirm) confirmDialog.onConfirm();
+                  setConfirmDialog({ ...confirmDialog, isOpen: false });
+                }}
+                style={{ flex: 1, backgroundColor: 'var(--danger)', borderColor: 'var(--danger)' }}
+              >
+                Confirm
+              </button>
             </div>
           </div>
         </div>

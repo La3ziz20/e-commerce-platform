@@ -43,8 +43,13 @@ public class OrderController {
         try {
             emailService.sendAdminAlerts(subject, body);
             emailService.sendSuperAdminAlerts(subject, body);
+            
+            // Notify the user directly
+            if (savedOrder.getUserEmail() != null && !savedOrder.getUserEmail().isEmpty()) {
+                emailService.sendOrderConfirmationEmail(savedOrder.getUserEmail(), savedOrder.getId().toString(), savedOrder.getTotal());
+            }
         } catch (Exception e) {
-            System.err.println("Failed to send admin email: " + e.getMessage());
+            System.err.println("Failed to send order emails: " + e.getMessage());
         }
 
         return ResponseEntity.ok(savedOrder);

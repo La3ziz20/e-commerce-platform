@@ -9,7 +9,7 @@ export default function Cart() {
 
   return (
     <div className={`cart-overlay ${isCartOpen ? 'open' : ''}`}>
-      <div className="cart-sidebar glass-panel" style={{ borderRight: 'none', borderTopRightRadius: 0, borderBottomRightRadius: 0, background: 'rgba(15,23,42,0.95)' }}>
+      <div className="cart-sidebar glass-panel" style={{ borderRight: 'none', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
         <div style={{ padding: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
           <h2 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}><ShoppingBag size={20} /> Your Cart</h2>
           <button className="btn-icon" onClick={() => setIsCartOpen(false)}>
@@ -32,7 +32,7 @@ export default function Cart() {
                   <div style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold', marginBottom: '8px' }}>{(item.price * item.quantity).toLocaleString('en-TN', { style: 'currency', currency: 'TND' })}</div>
                   
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--border)', borderRadius: '8px', padding: '2px' }}>
                       <button className="btn-icon" style={{ padding: '4px' }} onClick={() => updateQuantity(item.id, -1)}><Minus size={14} /></button>
                       <span style={{ fontSize: '0.85rem', width: '20px', textAlign: 'center' }}>{item.quantity}</span>
                       <button className="btn-icon" style={{ padding: '4px' }} onClick={() => updateQuantity(item.id, 1)}><Plus size={14} /></button>

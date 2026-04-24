@@ -158,8 +158,34 @@ export const AuthProvider = ({ children }) => {
     setCategoriesList(prev => prev.filter(c => c !== categoryName));
   };
 
+  const forgotPassword = async (email) => {
+    const response = await fetch('http://localhost:8080/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to send reset email");
+    }
+    return true;
+  };
+
+  const resetPassword = async (email, code, newPassword) => {
+    const response = await fetch('http://localhost:8080/api/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code, newPassword })
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to reset password");
+    }
+    return true;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, users, isAdmin, isSuperAdmin, login, register, verifyEmail, logout, updateRole, editUser, deleteUser, categoriesList, addCategory, editCategory, deleteCategory }}>
+    <AuthContext.Provider value={{ user, users, isAdmin, isSuperAdmin, login, register, verifyEmail, logout, updateRole, editUser, deleteUser, categoriesList, addCategory, editCategory, deleteCategory, forgotPassword, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
