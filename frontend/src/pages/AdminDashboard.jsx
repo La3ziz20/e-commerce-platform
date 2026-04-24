@@ -205,7 +205,7 @@ const AdminDashboard = () => {
        password: manageUserFormData.password,
        role: manageUserFormData.role
     });
-    toast.success("User profile updated successfully!");
+    toast.success("User profile updated successfully!", { id: 'admin-user-update' });
     setIsManageUserModalOpen(false);
   };
 
@@ -401,7 +401,7 @@ const AdminDashboard = () => {
               {orders.map(order => (
                 <tr key={order.id}>
                   <td style={{ fontWeight: 500 }}>{order.id}</td>
-                  <td>{order.user}</td>
+                  <td>{order.userName}</td>
                   <td style={{ color: 'var(--text-muted)' }}>{order.date}</td>
                   <td style={{ fontWeight: 'bold' }}>{order.total.toLocaleString('en-TN')} TND</td>
                   <td>
@@ -524,7 +524,7 @@ const AdminDashboard = () => {
                   <td>{u.registered}</td>
                   <td>
                     <button className="btn btn-primary btn-hover-anim" style={{ padding: '6px 12px', fontSize: '0.85rem' }} onClick={() => {
-                        const targetOrders = orders.filter(o => o.user === u.name).length;
+                        const targetOrders = orders.filter(o => o.userEmail === u.email).length;
                         setManageUserStats({ ordersCount: targetOrders });
                         setManageUserFormData({ userId: u.id, name: u.name, email: u.email, password: u.password, role: u.role });
                         setIsManageUserModalOpen(true);

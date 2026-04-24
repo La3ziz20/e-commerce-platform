@@ -24,4 +24,13 @@ public class ReviewController {
     public Review createReview(@RequestBody @NonNull Review review) {
         return reviewRepository.save(review);
     }
+
+    @DeleteMapping("/{id}")
+    public org.springframework.http.ResponseEntity<?> deleteReview(@PathVariable @NonNull Long id) {
+        if (!reviewRepository.existsById(id)) {
+            return org.springframework.http.ResponseEntity.notFound().build();
+        }
+        reviewRepository.deleteById(id);
+        return org.springframework.http.ResponseEntity.ok().build();
+    }
 }

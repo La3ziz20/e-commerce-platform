@@ -9,7 +9,10 @@ Aura is a modern, responsive, full-stack e-commerce web application meticulously
 * **Interactive Product Ratings**: Embedded 1-5 Star interactive module mapping subjective reviews entirely to persistent Spring Boot data stores.
 * **Dynamic Category Management**: Powerful CRUD environment enabling administrators to infinitely govern overarching site categories natively.
 * **Complete Order Governance**: Direct interaction allowing administrative-level order cancellations and real-time status updates instantly rippling across unified UI structures.
+* **User Profile Management**: Personal profile page allowing users to update their name and password securely.
+* **Review Moderation System**: Allow authors to delete their own reviews, and grant Admins/Super Admins full control to remove any review.
 * **Robust Theme Toggle**: Switch instantly between beautifully optimized Light Mode and Dark Mode parameters.
+* **Luxury Glassmorphism Aesthetic**: Complete Vogue-inspired editorial redesign featuring a custom logo, translucent glass overlays, and sophisticated toast notifications.
 
 ## Tech Stack
 * **Frontend**: React, Vite, React Router DOM, Context API, Lucide React (Icons), Native CSS (`var(...)` CSS Theming).

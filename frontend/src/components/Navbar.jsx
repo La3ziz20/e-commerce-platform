@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, Search, User, LogOut, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Menu, Search, User, LogOut, Sun, Moon, Gem } from 'lucide-react';
 import { useCart } from './CartContext';
 import { useAuth } from './AuthContext';
 import toast from 'react-hot-toast';
@@ -22,11 +22,9 @@ const Navbar = ({ onMenuClick, searchQuery, setSearchQuery, isLightMode, toggleT
         <button className="btn-icon" onClick={onMenuClick}>
           <Menu size={24} />
         </button>
-        <Link to="/" className="nav-brand glow-effect">
-          <div style={{ background: 'var(--primary)', padding: '6px', borderRadius: '8px' }}>
-            <ShoppingCart size={20} color="white" />
-          </div>
-          <span>Aura</span>
+        <Link to="/" className="nav-brand" style={{ gap: '10px' }}>
+          <Gem size={22} color="var(--primary)" strokeWidth={1.5} />
+          <span style={{ letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 400 }}>Aura</span>
         </Link>
       </div>
 
@@ -59,10 +57,12 @@ const Navbar = ({ onMenuClick, searchQuery, setSearchQuery, isLightMode, toggleT
         
         {user ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
-            <div className="glass-panel" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '20px' }}>
-              <User size={16} color="var(--primary)"/>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{user.name}</span>
-            </div>
+            <Link to="/profile" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="glass-panel btn-hover-anim" style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '20px', cursor: 'pointer' }}>
+                <User size={16} color="var(--primary)"/>
+                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{user.name}</span>
+              </div>
+            </Link>
             <button className="btn-icon btn-hover-anim" onClick={handleLogout} title="Logout">
               <LogOut size={20} color="var(--danger)" />
             </button>

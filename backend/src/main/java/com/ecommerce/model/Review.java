@@ -16,6 +16,8 @@ public class Review {
     
     private String author;
     
+    private String authorEmail;
+    
     private Integer rating;
     
     @Lob
@@ -23,9 +25,10 @@ public class Review {
 
     public Review() {}
 
-    public Review(Long productId, String author, Integer rating, String comment) {
+    public Review(Long productId, String author, String authorEmail, Integer rating, String comment) {
         this.productId = productId;
         this.author = author;
+        this.authorEmail = authorEmail;
         this.rating = rating;
         this.comment = comment;
     }
@@ -52,6 +55,14 @@ public class Review {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getAuthorEmail() {
+        return authorEmail;
+    }
+
+    public void setAuthorEmail(String authorEmail) {
+        this.authorEmail = authorEmail;
     }
 
     public Integer getRating() {

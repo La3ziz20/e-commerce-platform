@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Star, ShoppingCart, ArrowLeft, Heart, MessageSquare } from 'lucide-react';
+import { Star, ShoppingCart, ArrowLeft, Heart, MessageSquare, Trash2 } from 'lucide-react';
 import { useCart } from '../components/CartContext';
 import { useAuth } from '../components/AuthContext';
 import { useWishlist } from '../components/WishlistContext';
@@ -22,6 +22,8 @@ const ProductDetails = () => {
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
 
   useEffect(() => {
     // Fetch Product
@@ -61,6 +63,7 @@ const ProductDetails = () => {
     const payload = {
       productId: Number(id),
       author: user.name,
+      authorEmail: user.email,
       rating: rating,
       comment: comment.trim()
     };
@@ -82,6 +85,23 @@ const ProductDetails = () => {
     })
     .catch(err => toast.error(err.message))
     .finally(() => setIsSubmitting(false));
+  };
+
+  const handleDeleteReview = (reviewId) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Delete Review',
+      message: 'Are you sure you want to delete this review?',
+      onConfirm: () => {
+        fetch(`http://localhost:8080/api/reviews/${reviewId}`, { method: 'DELETE' })
+          .then(res => {
+            if (!res.ok) throw new Error("Failed to delete review");
+            setReviews(reviews.filter(r => r.id !== reviewId));
+            toast.success("Review deleted!");
+          })
+          .catch(err => toast.error(err.message));
+      }
+    });
   };
 
   const wished = product && isWishlisted ? isWishlisted(product.id) : false;
@@ -221,11 +241,23 @@ const ProductDetails = () => {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-              {reviews.map(review => (
-                <div key={review.id} className="glass-panel" style={{ padding: 'var(--space-lg)' }}>
+              {reviews.map(review => {
+                const canDelete = user && (user.email === review.authorEmail || user.role === 'ADMIN' || user.role === 'SUPER_ADMIN');
+                return (
+                <div key={review.id} className="glass-panel" style={{ padding: 'var(--space-lg)', position: 'relative' }}>
+                  {canDelete && (
+                    <button 
+                      onClick={() => handleDeleteReview(review.id)}
+                      className="btn-icon" 
+                      style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--danger)' }}
+                      title="Delete Review"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     <span style={{ fontWeight: 600 }}>{review.author}</span>
-                    <div style={{ display: 'flex', gap: '2px' }}>
+                    <div style={{ display: 'flex', gap: '2px', marginRight: canDelete ? '24px' : '0' }}>
                       {[1,2,3,4,5].map(star => (
                         <Star key={star} size={14} fill={star <= review.rating ? "var(--accent)" : "transparent"} color={star <= review.rating ? "var(--accent)" : "var(--text-muted)"} />
                       ))}
@@ -235,12 +267,49 @@ const ProductDetails = () => {
                     "{review.comment}"
                   </p>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>
 
       </div>
+
+      {/* Confirmation Modal Card */}
+      {confirmDialog.isOpen && (
+        <div className="cart-overlay open" style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 9999 }}>
+          <div className="glass-panel" style={{ padding: 'var(--space-xl)', width: '100%', maxWidth: '400px', margin: '0 16px', textAlign: 'center' }}>
+            <div style={{ marginBottom: 'var(--space-lg)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-md)' }}>
+                <div style={{ background: 'rgba(255, 71, 87, 0.1)', padding: '16px', borderRadius: '50%' }}>
+                  <Trash2 color="var(--danger)" size={32} />
+                </div>
+              </div>
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontWeight: 400 }}>{confirmDialog.title}</h3>
+              <p style={{ color: 'var(--text-muted)', marginTop: 'var(--space-sm)' }}>{confirmDialog.message}</p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'center' }}>
+              <button 
+                className="btn glass-panel btn-hover-anim" 
+                onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-primary btn-hover-anim" 
+                onClick={() => {
+                  if (confirmDialog.onConfirm) confirmDialog.onConfirm();
+                  setConfirmDialog({ ...confirmDialog, isOpen: false });
+                }}
+                style={{ flex: 1, backgroundColor: 'var(--danger)', color: 'white', boxShadow: '0 4px 14px rgba(255, 71, 87, 0.2)' }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -19,6 +19,7 @@ const Suppliers = lazy(() => import('./pages/Suppliers'));
 const Orders = lazy(() => import('./pages/Orders'));
 const Checkout = lazy(() => import('./pages/Checkout'));
 const ProductDetails = lazy(() => import('./pages/ProductDetails'));
+const Profile = lazy(() => import('./pages/Profile'));
 
 const Loader = () => (
   <div style={{ padding: 'var(--space-xl)', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-lg)' }}>
@@ -35,10 +36,27 @@ function App() {
         <CartProvider>
           <Router>
             <Toaster position="top-right" toastOptions={{
+              className: 'glass-panel',
               style: {
-                background: 'var(--surface)',
+                background: 'transparent',
                 color: 'var(--text-main)',
-                border: '1px solid var(--border)'
+                border: 'none', 
+                boxShadow: 'none',
+                borderRadius: '3px',
+                fontFamily: "'DM Sans', sans-serif",
+                padding: '16px 24px'
+              },
+              success: {
+                iconTheme: {
+                  primary: 'var(--accent)', // caramel sand color
+                  secondary: 'var(--background)'
+                }
+              },
+              error: {
+                iconTheme: {
+                  primary: 'var(--danger)', // danger red
+                  secondary: 'white'
+                }
               }
             }} />
             
@@ -60,6 +78,15 @@ function App() {
                   <ProtectedRoute>
                     <Suspense fallback={<Loader />}>
                       <AdminDashboard />
+                    </Suspense>
+                  </ProtectedRoute>
+                } />
+                
+                {/* Protected User Profile Route */}
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Suspense fallback={<Loader />}>
+                      <Profile />
                     </Suspense>
                   </ProtectedRoute>
                 } />
