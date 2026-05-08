@@ -17,7 +17,7 @@ const Orders = () => {
   
   // Only Super Admins can see and manage everyone's orders.
   // Normal users and standard Admins only see their personal shopping history.
-  const displayOrders = isSuperAdmin ? (orders || []) : (orders || []).filter(o => o.user === (user?.name || 'Guest'));
+  const displayOrders = isSuperAdmin ? (orders || []) : (orders || []).filter(o => o.userEmail === user?.email);
 
   const handleStatusChange = (orderId, newStatus) => {
     updateOrderStatus(orderId, newStatus);
@@ -57,7 +57,7 @@ const Orders = () => {
                       <Package size={16} color="var(--primary)" /> {order.id}
                     </div>
                   </td>
-                  {isSuperAdmin && <td style={{ color: 'var(--text-muted)' }}>{order.user}</td>}
+                  {isSuperAdmin && <td style={{ color: 'var(--text-muted)' }}>{order.userName}</td>}
                   <td style={{ color: 'var(--text-muted)' }}>{order.date}</td>
                   <td style={{ fontWeight: 'bold' }}>{(order.total || 0).toLocaleString('en-TN', { style: 'currency', currency: 'TND' })}</td>
                   <td>

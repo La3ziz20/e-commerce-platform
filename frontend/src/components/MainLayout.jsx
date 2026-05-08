@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
-import Sidebar from './Sidebar';
 import Cart from './Cart';
+import Sidebar from './Sidebar';
+import Footer from './Footer';
 
 const MainLayout = ({ searchQuery, setSearchQuery }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLightMode, setIsLightMode] = useState(() => {
-    return localStorage.getItem('theme') === 'light';
+    return localStorage.getItem('theme') !== 'dark'; // true by default for white background
   });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (isLightMode) {
@@ -20,26 +22,32 @@ const MainLayout = ({ searchQuery, setSearchQuery }) => {
     }
   }, [isLightMode]);
 
+  const isHome = location.pathname === '/';
+
   return (
-    <div className="app-wrapper">
-      <Navbar 
-        onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        isLightMode={isLightMode}
-        toggleTheme={() => setIsLightMode(!isLightMode)}
-      />
-      <Cart />
+    <div className="app-wrapper" style={{ display: 'flex', flexDirection: 'row', minHeight: '100vh', width: '100%' }}>
+      <Sidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(prev => !prev)} />
       
-      <div className="layout-container">
-        <Sidebar 
-          isOpen={isSidebarOpen} 
-          onClose={() => setIsSidebarOpen(false)} 
+      <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, minWidth: 0 }}>
+        <Navbar 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          onMenuClick={() => setIsSidebarOpen(prev => !prev)}
+          isLightMode={isLightMode}
+          setIsLightMode={setIsLightMode}
         />
+        <Cart />
         
-        <main className="main-content">
+        <main className="main-content" style={{ 
+          padding: isHome ? '0' : 'var(--space-xl)',
+          maxWidth: '100%',
+          width: '100%',
+          flexGrow: 1
+        }}>
           <Outlet context={{ searchQuery }} />
         </main>
+
+        {isHome && <Footer />}
       </div>
     </div>
   );

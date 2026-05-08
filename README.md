@@ -13,6 +13,7 @@ Aura is a modern, responsive, full-stack e-commerce web application meticulously
 * **Review Moderation System**: Allow authors to delete their own reviews, and grant Admins/Super Admins full control to remove any review.
 * **Robust Theme Toggle**: Switch instantly between beautifully optimized Light Mode and Dark Mode parameters.
 * **Luxury Glassmorphism Aesthetic**: Complete Vogue-inspired editorial redesign featuring a custom logo, translucent glass overlays, and sophisticated toast notifications.
+* **Sticky Cart Overlay**: Fixed styling issues to ensure the cart overlay correctly stays fixed to the viewport when scrolling, preventing it from disappearing.
 
 ## Tech Stack
 * **Frontend**: React, Vite, React Router DOM, Context API, Lucide React (Icons), Native CSS (`var(...)` CSS Theming).

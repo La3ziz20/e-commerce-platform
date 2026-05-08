@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../components/LanguageContext';
 import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -9,6 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, users, forgotPassword, resetPassword } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   // Forgot password states
@@ -99,18 +101,18 @@ const Login = () => {
   return (
     <div className="auth-layout">
       <div className="auth-card glass-panel hover-card glow-effect">
-        <h2>Welcome Back</h2>
+        <h2>{t('auth.welcome')}</h2>
         <p style={{ textAlign: 'center', marginTop: '-16px' }}>Sign in to continue to Aura</p>
         
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
           <div className="input-group">
             <Mail className="input-icon" size={20} />
-            <input type="email" placeholder="admin@aura.com for Admin Auth" className="glass-input" value={email} onChange={e => setEmail(e.target.value)} required />
+            <input type="email" placeholder={t('auth.email')} className="glass-input" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           
           <div className="input-group">
             <Lock className="input-icon" size={20} />
-            <input type={showPassword ? "text" : "password"} placeholder="Password" className="glass-input" value={password} onChange={e => setPassword(e.target.value)} required />
+            <input type={showPassword ? "text" : "password"} placeholder={t('auth.password')} className="glass-input" value={password} onChange={e => setPassword(e.target.value)} required />
             <button type="button" className="btn-icon" style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -121,12 +123,12 @@ const Login = () => {
           </div>
           
           <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)', width: '100%' }}>
-            <LogIn size={20} /> Login
+            <LogIn size={20} /> {t('auth.loginBtn')}
           </button>
         </form>
         
         <div style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-          Don't have an account? <Link to="/signup" style={{ color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none' }}>Sign up</Link>
+          {t('auth.noAccount')} <Link to="/signup" style={{ color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none' }}>{t('auth.signupLink')}</Link>
         </div>
       </div>
     </div>

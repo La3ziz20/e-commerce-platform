@@ -4,7 +4,9 @@ import toast from 'react-hot-toast';
 import { CATEGORY_NAMES } from '../data/categories';
 import { useAuth } from '../components/AuthContext';
 import { useCart } from '../components/CartContext';
+import { useLanguage } from '../components/LanguageContext';
 import { Clock, Truck, CheckCircle, XCircle } from 'lucide-react';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 const STATUS_MAP = {
   'Processing': { icon: Clock, color: 'var(--accent)' },
@@ -16,6 +18,7 @@ const STATUS_MAP = {
 const AdminDashboard = () => {
   const { user, users, isSuperAdmin, updateRole, register, editUser, deleteUser, categoriesList, addCategory, editCategory, deleteCategory } = useAuth();
   const { orders, updateOrderStatus } = useCart();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
@@ -267,22 +270,22 @@ const AdminDashboard = () => {
         <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
           {activeTab === 'categories' && (
             <button className="btn btn-primary btn-hover-anim" onClick={() => handleOpenCategoryModal()}>
-              <Plus size={18}/> Add Category
+              <Plus size={18}/> {t('admin.addCategory')}
             </button>
           )}
           {activeTab === 'suppliers' && (
             <button className="btn btn-primary btn-hover-anim" onClick={() => handleOpenSupplierModal()}>
-              <Plus size={18}/> Add Supplier
+              <Plus size={18}/> {t('admin.addSupplier')}
             </button>
           )}
           {activeTab === 'users' && isSuperAdmin && (
             <button className="btn btn-primary btn-hover-anim" onClick={() => setIsUserModalOpen(true)}>
-              <Plus size={18}/> Create User
+              <Plus size={18}/> {t('admin.createUser')}
             </button>
           )}
           {activeTab === 'products' && (
             <button className="btn btn-primary btn-hover-anim" onClick={() => handleOpenModal()}>
-              <Plus size={18}/> Add Product
+              <Plus size={18}/> {t('admin.addProduct')}
             </button>
           )}
         </div>
@@ -319,13 +322,13 @@ const AdminDashboard = () => {
           className={`btn ${activeTab === 'products' ? 'btn-primary' : 'glass-panel'}`} 
           onClick={() => setActiveTab('products')}
         >
-          Products Data
+          {t('admin.tabProducts')}
         </button>
         <button 
           className={`btn ${activeTab === 'suppliers' ? 'btn-primary' : 'glass-panel'}`} 
           onClick={() => setActiveTab('suppliers')}
         >
-          Manage Suppliers
+          {t('admin.tabSuppliers')}
         </button>
         {isSuperAdmin && (
           <>
@@ -333,25 +336,34 @@ const AdminDashboard = () => {
               className={`btn ${activeTab === 'users' ? 'btn-primary' : 'glass-panel'}`} 
               onClick={() => setActiveTab('users')}
             >
-              User Accounts
+              {t('admin.tabUsers')}
             </button>
             <button 
               className={`btn ${activeTab === 'categories' ? 'btn-primary' : 'glass-panel'}`} 
               onClick={() => setActiveTab('categories')}
             >
-              Manage Categories
+              {t('admin.tabCategories')}
             </button>
             <button 
               className={`btn ${activeTab === 'orders' ? 'btn-primary' : 'glass-panel'}`} 
               onClick={() => setActiveTab('orders')}
             >
-              Manage Orders
+              {t('admin.tabOrders')}
+            </button>
+            <button 
+              className={`btn ${activeTab === 'analytics' ? 'btn-primary' : 'glass-panel'}`} 
+              onClick={() => setActiveTab('analytics')}
+            >
+              {t('admin.tabAnalytics')}
             </button>
           </>
         )}
       </div>
 
       {/* Views */}
+      {activeTab === 'analytics' ? (
+        <AnalyticsDashboard />
+      ) : (
       <div className="glass-panel" style={{ overflowX: 'auto', padding: 'var(--space-md)' }}>
         {activeTab === 'products' ? (
           <table className="admin-table">
@@ -429,7 +441,7 @@ const AdminDashboard = () => {
                             }
                           });
                         }}>
-                        Cancel Order
+                        {t('admin.cancelOrder')}
                       </button>
                     )}
                   </td>
@@ -529,7 +541,7 @@ const AdminDashboard = () => {
                         setManageUserFormData({ userId: u.id, name: u.name, email: u.email, password: u.password, role: u.role });
                         setIsManageUserModalOpen(true);
                       }}>
-                      Manage User
+                      {t('admin.manageUser')}
                     </button>
                   </td>
                 </tr>
@@ -538,6 +550,7 @@ const AdminDashboard = () => {
           </table>
         ) : null}
       </div>
+      )}
 
       {/* Modal Profile */}
       {isModalOpen && (
@@ -576,7 +589,7 @@ const AdminDashboard = () => {
                 value={formData.imageUrl || ''} onChange={e => setFormData({...formData, imageUrl: e.target.value})}/>
                 
               <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
-                {editingProduct ? 'Save Changes' : 'Create Product'}
+                {editingProduct ? t('admin.saveChanges') : t('admin.createProduct')}
               </button>
             </form>
           </div>
@@ -595,7 +608,7 @@ const AdminDashboard = () => {
                 value={categoryFormName} onChange={e => setCategoryFormName(e.target.value)} autoFocus required/>
                 
               <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
-                {editingCategoryName ? 'Save Changes' : 'Create Category'}
+                {editingCategoryName ? t('admin.saveChanges') : t('admin.createCategory')}
               </button>
             </form>
           </div>
@@ -621,7 +634,7 @@ const AdminDashboard = () => {
                 value={supplierFormData.phone} onChange={e => setSupplierFormData({...supplierFormData, phone: e.target.value})} />
                 
               <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
-                {editingSupplier ? 'Save Changes' : 'Create Supplier'}
+                {editingSupplier ? t('admin.saveChanges') : t('admin.createSupplier')}
               </button>
             </form>
           </div>
@@ -655,7 +668,7 @@ const AdminDashboard = () => {
                 <option value="SUPER_ADMIN">SUPER_ADMIN</option>
               </select>
               <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
-                Create User
+                {t('admin.createUser')}
               </button>
             </form>
           </div>
@@ -683,7 +696,7 @@ const AdminDashboard = () => {
                   <button className="btn" type="button" 
                           onClick={() => handleDeleteTargetUser(manageUserFormData.userId)}
                           style={{ width: '100%', backgroundColor: 'rgba(255, 71, 87, 0.1)', color: 'var(--danger)', border: '1px solid var(--danger)' }}>
-                    Delete User Profile
+                    {t('admin.deleteUser')}
                   </button>
                 </div>
               </div>
@@ -721,7 +734,7 @@ const AdminDashboard = () => {
                     </select>
                   </div>
                   <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)' }}>
-                    Save Profile Changes
+                    {t('admin.saveProfile')}
                   </button>
                 </form>
               </div>
@@ -750,7 +763,7 @@ const AdminDashboard = () => {
                 onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
                 style={{ flex: 1 }}
               >
-                Cancel
+                {t('admin.cancel')}
               </button>
               <button 
                 className="btn btn-primary btn-hover-anim" 
@@ -760,7 +773,7 @@ const AdminDashboard = () => {
                 }}
                 style={{ flex: 1, backgroundColor: 'var(--danger)', borderColor: 'var(--danger)' }}
               >
-                Confirm
+                {t('admin.confirm')}
               </button>
             </div>
           </div>

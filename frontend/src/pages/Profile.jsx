@@ -64,7 +64,7 @@ const Profile = () => {
   if (!user) return null;
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+    <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
       <button className="btn glass-panel btn-hover-anim" style={{ padding: '8px 16px', marginBottom: 'var(--space-xl)' }} onClick={() => navigate(-1)}>
         <ArrowLeft size={16} /> Back
       </button>
@@ -72,14 +72,14 @@ const Profile = () => {
       <div className="glass-panel" style={{ padding: 'var(--space-xl)' }}>
         <div style={{ textAlign: 'center', marginBottom: 'var(--space-xl)' }}>
           <div style={{ 
-            width: '80px', height: '80px', borderRadius: '50%', 
+            width: '120px', height: '120px', borderRadius: '50%', 
             background: 'var(--primary)', color: 'white', 
             display: 'flex', alignItems: 'center', justifyContent: 'center', 
             margin: '0 auto var(--space-md)' 
           }}>
-            <User size={40} />
+            <User size={60} />
           </div>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', margin: 0 }}>My Profile</h2>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', margin: 0, fontSize: '2.5rem' }}>My Profile</h2>
           <p style={{ color: 'var(--text-muted)' }}>Manage your personal details</p>
         </div>
 

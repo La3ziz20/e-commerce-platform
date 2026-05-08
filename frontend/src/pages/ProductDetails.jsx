@@ -4,6 +4,7 @@ import { Star, ShoppingCart, ArrowLeft, Heart, MessageSquare, Trash2 } from 'luc
 import { useCart } from '../components/CartContext';
 import { useAuth } from '../components/AuthContext';
 import { useWishlist } from '../components/WishlistContext';
+import { useLanguage } from '../components/LanguageContext';
 import toast from 'react-hot-toast';
 
 const ProductDetails = () => {
@@ -12,6 +13,7 @@ const ProductDetails = () => {
   const { addToCart } = useCart();
   const { user } = useAuth() || {};
   const { toggleWishlist, isWishlisted } = useWishlist() || {};
+  const { t } = useLanguage();
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -120,7 +122,7 @@ const ProductDetails = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
       
       <button className="btn glass-panel btn-hover-anim" style={{ alignSelf: 'flex-start', padding: '8px 16px' }} onClick={() => navigate(-1)}>
-        <ArrowLeft size={16} /> Back
+        <ArrowLeft size={16} /> {t('product.back')}
       </button>
 
       {/* Main Product Section */}
@@ -131,10 +133,10 @@ const ProductDetails = () => {
         
         <div style={{ padding: 'var(--space-xl)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', gap: '8px', alignSelf: 'flex-start', marginBottom: 'var(--space-sm)' }}>
-            <div className="badge">{product.category}</div>
+            <div className="badge">{t(`category.${product.category.toLowerCase()}`)}</div>
             {product.supplier && (
               <div className="badge" style={{ backgroundColor: 'var(--accent)', color: 'white' }}>
-                Supplier: {product.supplier.name}
+                {t('product.supplier')} {product.supplier.name}
               </div>
             )}
           </div>
@@ -164,7 +166,7 @@ const ProductDetails = () => {
                 <Heart size={20} fill={wished ? 'var(--danger)' : 'transparent'} color={wished ? 'var(--danger)' : 'var(--text-main)'} />
               </button>
               <button className="btn btn-primary btn-hover-anim" style={{ padding: '0 var(--space-xl)' }} onClick={() => { addToCart(product); toast.success("Added to cart"); }}>
-                <ShoppingCart size={20} /> Add to Cart
+                <ShoppingCart size={20} /> {t('product.addToCart')}
               </button>
             </div>
           </div>
@@ -177,13 +179,13 @@ const ProductDetails = () => {
         {/* Review Form */}
         <div className="glass-panel" style={{ padding: 'var(--space-xl)', height: 'fit-content' }}>
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 'var(--space-md)' }}>
-            <MessageSquare size={20} color="var(--primary)" /> Write a Review
+            <MessageSquare size={20} color="var(--primary)" /> {t('product.writeReview')}
           </h3>
           
           {user ? (
             <form onSubmit={handleReviewSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
               <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Your Rating</label>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('product.yourRating')}</label>
                 <div style={{ display: 'flex', gap: '4px', cursor: 'pointer' }}>
                   {[1, 2, 3, 4, 5].map(star => (
                     <button 
@@ -206,7 +208,7 @@ const ProductDetails = () => {
               </div>
               
               <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Your Comment</label>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('product.yourComment')}</label>
                 <textarea 
                   className="glass-input" 
                   rows="4" 
@@ -219,25 +221,25 @@ const ProductDetails = () => {
               </div>
               
               <button type="submit" className="btn btn-primary btn-hover-anim" disabled={isSubmitting} style={{ width: '100%' }}>
-                {isSubmitting ? 'Posting...' : 'Post Review'}
+                {isSubmitting ? t('product.posting') : t('product.postReview')}
               </button>
             </form>
           ) : (
             <div style={{ textAlign: 'center', padding: 'var(--space-lg) 0' }}>
-              <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-md)' }}>You must be logged in to leave a review.</p>
-              <button className="btn glass-panel btn-hover-anim" onClick={() => navigate('/login')}>Login Now</button>
+              <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-md)' }}>{t('product.loginToReview')}</p>
+              <button className="btn glass-panel btn-hover-anim" onClick={() => navigate('/login')}>{t('product.loginNow')}</button>
             </div>
           )}
         </div>
 
         {/* Reviews List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-          <h3 style={{ marginBottom: '8px' }}>Customer Reviews ({reviews.length})</h3>
+          <h3 style={{ marginBottom: '8px' }}>{t('product.customerReviews')} ({reviews.length})</h3>
           
           {reviews.length === 0 ? (
             <div className="glass-panel" style={{ padding: 'var(--space-xl)', textAlign: 'center' }}>
               <Star size={40} color="var(--border)" style={{ marginBottom: '16px' }} />
-              <p style={{ color: 'var(--text-muted)' }}>No reviews yet. Be the first to rate this product!</p>
+              <p style={{ color: 'var(--text-muted)' }}>{t('product.noReviews')}</p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
@@ -294,7 +296,7 @@ const ProductDetails = () => {
                 onClick={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
                 style={{ flex: 1 }}
               >
-                Cancel
+                {t('product.cancel')}
               </button>
               <button 
                 className="btn btn-primary btn-hover-anim" 
@@ -304,7 +306,7 @@ const ProductDetails = () => {
                 }}
                 style={{ flex: 1, backgroundColor: 'var(--danger)', color: 'white', boxShadow: '0 4px 14px rgba(255, 71, 87, 0.2)' }}
               >
-                Confirm
+                {t('product.confirm')}
               </button>
             </div>
           </div>

@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { CATEGORIES } from '../data/categories';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
+import { useLanguage } from '../components/LanguageContext';
 import { Tag } from 'lucide-react';
 
 const Categories = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const { categoriesList } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetch('http://localhost:8080/api/products')
@@ -30,7 +32,7 @@ const Categories = () => {
   return (
     <>
       <div style={{ marginBottom: 'var(--space-lg)' }}>
-        <h2>Browse Categories</h2>
+        <h2>{t('category.pageTitle')}</h2>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--space-lg)' }}>
@@ -43,8 +45,8 @@ const Categories = () => {
               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '16px', borderRadius: '50%' }}>
                 <cat.icon size={32} color="var(--primary)" />
               </div>
-              <h3 style={{ fontSize: '1.2rem' }}>{cat.name}</h3>
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{actualCount} Products</span>
+              <h3 style={{ fontSize: '1.2rem' }}>{t(`category.${cat.name.toLowerCase()}`)}</h3>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{actualCount} {t('category.productsCount')}</span>
             </div>
           );
         })}

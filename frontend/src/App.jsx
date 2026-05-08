@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { CartProvider } from './components/CartContext';
 import { AuthProvider } from './components/AuthContext';
 import { WishlistProvider } from './components/WishlistContext';
+import { LanguageProvider } from './components/LanguageContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/MainLayout';
 import SkeletonCard from './components/SkeletonCard';
@@ -32,9 +33,10 @@ function App() {
 
   return (
     <AuthProvider>
-      <WishlistProvider>
-        <CartProvider>
-          <Router>
+      <LanguageProvider>
+        <WishlistProvider>
+          <CartProvider>
+            <Router>
             <Toaster position="top-right" toastOptions={{
               className: 'glass-panel',
               style: {
@@ -95,6 +97,7 @@ function App() {
           </Router>
         </CartProvider>
       </WishlistProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 }

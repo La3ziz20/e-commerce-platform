@@ -1,17 +1,19 @@
 import React from 'react';
 import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCart } from './CartContext';
+import { useLanguage } from './LanguageContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Cart() {
   const { isCartOpen, setIsCartOpen, cartItems, cartTotal, removeFromCart, updateQuantity } = useCart();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   return (
     <div className={`cart-overlay ${isCartOpen ? 'open' : ''}`}>
       <div className="cart-sidebar glass-panel" style={{ borderRight: 'none', borderTopRightRadius: 0, borderBottomRightRadius: 0 }}>
         <div style={{ padding: 'var(--space-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
-          <h2 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}><ShoppingBag size={20} /> Your Cart</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}><ShoppingBag size={20} /> {t('cart.title')}</h2>
           <button className="btn-icon" onClick={() => setIsCartOpen(false)}>
             <X size={24} />
           </button>
@@ -21,7 +23,7 @@ export default function Cart() {
           {cartItems.length === 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexGrow: 1, gap: 'var(--space-md)', color: 'var(--text-muted)' }}>
               <ShoppingBag size={48} opacity={0.5} />
-              <p>Your cart is empty</p>
+              <p>{t('cart.empty')}</p>
             </div>
           ) : (
             cartItems.map((item) => (
@@ -51,11 +53,11 @@ export default function Cart() {
         {cartItems.length > 0 && (
           <div style={{ padding: 'var(--space-lg)', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', fontWeight: 'bold' }}>
-              <span>Total</span>
+              <span>{t('cart.total')}</span>
               <span>{cartTotal.toLocaleString('en-TN', { style: 'currency', currency: 'TND' })}</span>
             </div>
             <button className="btn btn-primary btn-hover-anim" style={{ width: '100%', padding: 'var(--space-md)' }} onClick={() => { setIsCartOpen(false); navigate('/checkout'); }}>
-              Proceed to Checkout
+              {t('cart.checkoutBtn')}
             </button>
           </div>
         )}

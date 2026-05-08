@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../components/LanguageContext';
 import { Mail, Lock, UserPlus, User, Key, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -13,6 +14,7 @@ const Signup = () => {
   const [verificationCode, setVerificationCode] = useState('');
   
   const { register, verifyEmail } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -46,7 +48,7 @@ const Signup = () => {
       <div className="auth-card glass-panel hover-card glow-effect">
         {!isVerifying ? (
           <>
-            <h2>Create Account</h2>
+            <h2>{t('auth.create')}</h2>
             <p style={{ textAlign: 'center', marginTop: '-16px' }}>Join Aura today!</p>
             
             <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
@@ -54,7 +56,7 @@ const Signup = () => {
                 <User className="input-icon" size={20} />
                 <input 
                   type="text" 
-                  placeholder="Full Name" 
+                  placeholder={t('auth.name')} 
                   className="glass-input" 
                   value={name}
                   onChange={e => setName(e.target.value)}
@@ -66,7 +68,7 @@ const Signup = () => {
                 <Mail className="input-icon" size={20} />
                 <input 
                   type="email" 
-                  placeholder="Email Address" 
+                  placeholder={t('auth.email')} 
                   className="glass-input" 
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -78,7 +80,7 @@ const Signup = () => {
                 <Lock className="input-icon" size={20} />
                 <input 
                   type={showPassword ? "text" : "password"} 
-                  placeholder="Create Password" 
+                  placeholder={t('auth.password')} 
                   className="glass-input" 
                   value={password}
                   onChange={e => setPassword(e.target.value)}
@@ -90,12 +92,12 @@ const Signup = () => {
               </div>
               
               <button type="submit" className="btn btn-primary btn-hover-anim" style={{ marginTop: 'var(--space-sm)', width: '100%' }}>
-                <UserPlus size={20} /> Sign Up
+                <UserPlus size={20} /> {t('auth.signupBtn')}
               </button>
             </form>
             
             <div style={{ textAlign: 'center', fontSize: '0.9rem' }}>
-              Already have an account? <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none' }}>Log in</Link>
+              {t('auth.hasAccount')} <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 'bold', textDecoration: 'none' }}>{t('auth.loginLink')}</Link>
             </div>
           </>
         ) : (
